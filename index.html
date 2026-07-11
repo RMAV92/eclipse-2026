@@ -264,13 +264,22 @@ window.gotoKey = k => {
   gotoMarker(REG.find(r => r.key === k));
 };
 // last-resort fallback: real place names ("As Pontes de García Rodríguez")
-// aren't among the 16 synthetic zone names, so geocode them via Nominatim
-// (free, no key) restricted to a Galicia-ish bounding box.
+// aren't among the 16 synthetic zone names, so geocode them (free, no key).
+// Photon (komoot) first — it tolerates typos/missing accents the way Google
+// Maps does ("As Ponte de Garcia Rodrigez" still resolves); Nominatim as a
+// stricter fallback if Photon has nothing. Both biased to Galicia.
 async function geocode(query) {
-  const url = "https://nominatim.openstreetmap.org/search?format=json&limit=1" +
-    "&viewbox=-9.6,44.1,-6.2,41.6&bounded=1&q=" +
-    encodeURIComponent(query + ", Galicia, España");
   try {
+    const res = await fetch("https://photon.komoot.io/api/?limit=1&lat=42.9&lon=-7.9&zoom=9&q=" +
+      encodeURIComponent(query));
+    const j = await res.json();
+    const f = j.features && j.features[0];
+    if (f) return { lat: f.geometry.coordinates[1], lon: f.geometry.coordinates[0] };
+  } catch (e) { /* fall through to Nominatim */ }
+  try {
+    const url = "https://nominatim.openstreetmap.org/search?format=json&limit=1" +
+      "&viewbox=-9.6,44.1,-6.2,41.6&bounded=1&q=" +
+      encodeURIComponent(query + ", Galicia, España");
     const res = await fetch(url, { headers: { "Accept-Language": "es" } });
     const arr = await res.json();
     return arr.length ? { lat: parseFloat(arr[0].lat), lon: parseFloat(arr[0].lon) } : null;
