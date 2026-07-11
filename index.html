@@ -39,6 +39,10 @@
   .legend a { padding: 4px 6px; margin: -4px -2px; display: inline-block; }
   #tally { max-width: min(320px, 82vw); max-height: 70vh; overflow-y: auto; }
   #legend-toggle { cursor: pointer; font-weight: 700; }
+  #search { background: #fff; padding: 4px; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+  #search input { border: 1px solid #ccc; border-radius: 4px; padding: 6px 8px;
+    font-size: 16px; width: 168px; max-width: 46vw; }
+  #search input:focus { outline: 2px solid #2B6CB0; border-color: #2B6CB0; }
   .dlist-entry { padding: 6px 0; border-top: 1px solid #eee; }
   .dlist-entry:first-child { border-top: none; }
   @media (max-width: 480px) {
@@ -178,7 +182,7 @@ window.setYo = n => {
   refreshBubbles(); updateTally();
 };
 window.setNombre = () => {
-  const n = prompt("Tu nombre (así aparece en la hoja compartida al descartar):", NOMBRE);
+  const n = prompt("¿Cómo te llamas? Quedará junto a cada punto que descartes, en la hoja compartida del grupo:", NOMBRE);
   if (n === null) return;
   NOMBRE = n.trim(); localStorage.setItem("eclipse_nombre", NOMBRE);
   updateTally();
@@ -192,17 +196,39 @@ function bubbleIcon(z) {
 }
 function refreshBubbles() { Object.values(ZONES).forEach(z => z.bubble.setIcon(bubbleIcon(z))); }
 computeWho();
+function openZone(name) {
+  const z = ZONES[name];
+  if (!z) return;
+  if (!map.hasLayer(lyZonas)) map.addLayer(lyZonas);
+  lyZonas.removeLayer(z.bubble);
+  map.addLayer(z.group);
+  map.fitBounds(z.bounds.pad(0.25), { maxZoom: 12 });
+}
 Object.values(ZONES).forEach(z => {
   const lls = z.pts.map(m => m.getLatLng());
   z.bounds = L.latLngBounds(lls);
   const c = [lls.reduce((a, l) => a + l.lat, 0) / lls.length,
              lls.reduce((a, l) => a + l.lng, 0) / lls.length];
-  z.bubble = L.marker(c, { icon: bubbleIcon(z) }).on("click", () => {
-    lyZonas.removeLayer(z.bubble);
-    map.addLayer(z.group);
-    map.fitBounds(z.bounds.pad(0.25), { maxZoom: 12 });
-  });
+  z.bubble = L.marker(c, { icon: bubbleIcon(z) }).on("click", () => openZone(z.name));
   lyZonas.addLayer(z.bubble);
+});
+
+// zone search: type-ahead over the 16 fixed zone names, jumps like clicking its bubble
+const search = L.control({ position: "topleft" });
+search.onAdd = () => {
+  const d = L.DomUtil.create("div", "legend");
+  d.id = "search";
+  d.innerHTML = `<input id="searchInput" list="zoneList" placeholder="🔍 Buscar zona…" autocomplete="off">` +
+    `<datalist id="zoneList">${Object.keys(ZONES).sort()
+      .map(n => `<option value="${n}">`).join("")}</datalist>`;
+  L.DomEvent.disableClickPropagation(d);
+  L.DomEvent.disableScrollPropagation(d);
+  return d;
+};
+search.addTo(map);
+document.getElementById("searchInput").addEventListener("change", e => {
+  openZone(e.target.value);
+  e.target.value = ""; e.target.blur();
 });
 window.replegarZonas = () => {
   Object.values(ZONES).forEach(z => {
@@ -369,10 +395,11 @@ function updateTally() {
     YO === n ? `<b>[${n}]</b>`
              : `<a href="#" onclick="setYo(${n});return false">${n}</a>`).join(" ");
   document.getElementById("tally").innerHTML = toggle + "<br>" +
-    `👥 Somos: ${somos} · 👤 Turno: ${yo} <small>(atenúa las zonas de los otros)</small><br>` +
-    `🖊️ Nombre: <b>${NOMBRE || "(sin poner)"}</b> ` +
-    `<a href="#" onclick="setNombre();return false">${NOMBRE ? "cambiar" : "poner nombre"}</a> ` +
-    `<small>(así queda en la hoja al descartar)</small><br>` +
+    `👥 Reparto de zonas — sois: ${somos} · tu turno: ${yo} ` +
+    `<small>(solo para atenuar las zonas de los otros, no afecta a los descartes)</small><br>` +
+    `🖊️ Tu nombre: <b>${NOMBRE || "sin poner"}</b> ` +
+    `<a href="#" onclick="setNombre();return false">${NOMBRE ? "cambiar" : "ponlo"}</a> ` +
+    `<small>queda junto a cada punto que descartes, para que el grupo sepa quién fue</small><br>` +
     `<a href="#" onclick="toggleLista();return false">ver lista</a> · ` +
     `<a href="#" onclick="restaurarTodo();return false">restaurar todos</a><br>` +
     (SHEET_URL
