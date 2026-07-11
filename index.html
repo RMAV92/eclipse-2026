@@ -250,14 +250,20 @@ function nearestMarker(lat, lon) {
   });
   return best && bestKm < 5 ? { ...best, km: bestKm } : null;
 }
+// used by search-by-coords AND the favorites/discards lists ("go here" links)
+function gotoMarker(r) {
+  if (!r) return;
+  if (!map.hasLayer(r.group)) map.addLayer(r.group);
+  map.flyTo(r.marker.getLatLng(), Math.max(map.getZoom(), 13), { duration: 0.8 });
+  map.once("moveend", () => r.marker.openPopup());
+}
+window.gotoKey = k => gotoMarker(REG.find(r => r.key === k));
 window.doSearch = () => {
   const input = document.getElementById("searchInput");
   const coords = parseCoords(input.value);
   const near = coords && nearestMarker(coords.lat, coords.lon);
   if (near) {
-    if (!map.hasLayer(near.group)) map.addLayer(near.group);
-    map.flyTo(near.marker.getLatLng(), Math.max(map.getZoom(), 13), { duration: 0.8 });
-    map.once("moveend", () => near.marker.openPopup());
+    gotoMarker(near);
     input.value = ""; input.blur();
     return false;
   }
@@ -446,7 +452,7 @@ function favsHtml() {
   if (!favoritos.size) return "<i>(sin favoritos — márcalos desde el popup de cada punto)</i>";
   const title = k => (REG.find(r => r.key === k)?.marker.options.title) || "";
   return [...favoritos.keys()].map(k => `<div class="dlist-entry">` +
-    `⭐ ${title(k)} <small>(${k})</small> — ` +
+    `⭐ <a href="#" onclick="gotoKey('${k}');return false">${title(k)} <small>(${k})</small></a> — ` +
     `<a href="#" onclick="toggleFavorito('${k}');return false">quitar</a></div>`).join("");
 }
 const tally = L.control({ position: "bottomright" });
