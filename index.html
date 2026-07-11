@@ -257,29 +257,63 @@ function gotoMarker(r) {
   map.flyTo(r.marker.getLatLng(), Math.max(map.getZoom(), 13), { duration: 0.8 });
   map.once("moveend", () => r.marker.openPopup());
 }
-window.gotoKey = k => gotoMarker(REG.find(r => r.key === k));
-window.doSearch = () => {
+window.gotoKey = k => {
+  // collapse the panel first: otherwise the point popup opens on top of it
+  // and you get two big cards stacked, hard to tell which "x" closes what
+  tallyOpen = false; tallyView = "main"; updateTally();
+  gotoMarker(REG.find(r => r.key === k));
+};
+// last-resort fallback: real place names ("As Pontes de García Rodríguez")
+// aren't among the 16 synthetic zone names, so geocode them via Nominatim
+// (free, no key) restricted to a Galicia-ish bounding box.
+async function geocode(query) {
+  const url = "https://nominatim.openstreetmap.org/search?format=json&limit=1" +
+    "&viewbox=-9.6,44.1,-6.2,41.6&bounded=1&q=" +
+    encodeURIComponent(query + ", Galicia, España");
+  try {
+    const res = await fetch(url, { headers: { "Accept-Language": "es" } });
+    const arr = await res.json();
+    return arr.length ? { lat: parseFloat(arr[0].lat), lon: parseFloat(arr[0].lon) } : null;
+  } catch (e) { return null; }
+}
+function flashPlace(lat, lon) {
+  const m = L.circleMarker([lat, lon], { radius: 10, color: "#2B6CB0", weight: 3, fill: false }).addTo(map);
+  let n = 0;
+  const iv = setInterval(() => {
+    m.setStyle({ opacity: n % 2 ? 1 : 0.15 });
+    if (++n > 5) { clearInterval(iv); map.removeLayer(m); }
+  }, 260);
+}
+window.doSearch = async () => {
   const input = document.getElementById("searchInput");
-  const coords = parseCoords(input.value);
+  const query = input.value;
+  const coords = parseCoords(query);
   const near = coords && nearestMarker(coords.lat, coords.lon);
-  if (near) {
-    gotoMarker(near);
+  if (near) { gotoMarker(near); input.value = ""; input.blur(); return false; }
+  const name = findZone(query);
+  if (name) { flyToZone(name); input.value = ""; input.blur(); return false; }
+  if (!query.trim()) return false;
+  const btn = document.querySelector("#search button[type=submit]");
+  btn.textContent = "…";
+  const place = await geocode(query);
+  btn.textContent = "🔍";
+  if (place) {
+    const nearPlace = nearestMarker(place.lat, place.lon);
+    if (nearPlace) { gotoMarker(nearPlace); }
+    else { map.flyTo([place.lat, place.lon], 12, { duration: 0.8 });
+           map.once("moveend", () => flashPlace(place.lat, place.lon)); }
     input.value = ""; input.blur();
     return false;
   }
-  const name = findZone(input.value);
-  if (name) { flyToZone(name); input.value = ""; input.blur(); }
-  else if (input.value.trim()) {
-    input.style.borderColor = "#C53030";
-    setTimeout(() => { input.style.borderColor = ""; }, 900);
-  }
+  input.style.borderColor = "#C53030";
+  setTimeout(() => { input.style.borderColor = ""; }, 900);
   return false;
 };
 const search = L.control({ position: "topleft" });
 search.onAdd = () => {
   const d = L.DomUtil.create("div", "legend");
   d.id = "search";
-  d.innerHTML = `<form id="searchForm" onsubmit="return doSearch()">` +
+  d.innerHTML = `<form id="searchForm" onsubmit="doSearch();return false">` +
     `<input id="searchInput" list="zoneList" placeholder="Zona o coordenadas…" autocomplete="off" enterkeyhint="search">` +
     `<button type="submit" aria-label="Buscar zona">🔍</button>` +
     `<datalist id="zoneList">${Object.keys(ZONES).sort()
