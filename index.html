@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Eclipse 2026-08-12 · viewshed Galicia</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -28,15 +28,28 @@
   .popup td { padding: 1px 6px 1px 0; color: #333; }
   .popup td:first-child { color: #777; }
   .popup .links { margin-top: 6px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .popup .links a { padding: 3px 0; display: inline-block; }
+  .leaflet-popup-content-wrapper, .leaflet-popup-content { max-width: min(330px, 88vw); }
   .legend { background: #fff; padding: 8px 12px; border-radius: 6px;
-    box-shadow: 0 1px 4px rgba(0,0,0,.3); line-height: 1.8; max-width: 270px; }
+    box-shadow: 0 1px 4px rgba(0,0,0,.3); line-height: 1.8;
+    max-width: min(270px, 78vw); }
   .legend .dot { display: inline-block; width: 12px; height: 12px;
     border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
   .legend small { color: #666; }
+  .legend a { padding: 4px 6px; margin: -4px -2px; display: inline-block; }
+  #tally { max-width: min(320px, 82vw); }
+  #legend-toggle { cursor: pointer; font-weight: 700; }
   #dlist { display: none; position: absolute; right: 10px; bottom: 130px;
     z-index: 1000; background: #fff; padding: 10px 14px; border-radius: 6px;
-    box-shadow: 0 1px 6px rgba(0,0,0,.35); max-height: 45vh; max-width: 340px;
-    overflow: auto; font-size: 12px; line-height: 1.5; }
+    box-shadow: 0 1px 6px rgba(0,0,0,.35); max-height: 45vh;
+    max-width: min(340px, 90vw); overflow: auto; font-size: 12px; line-height: 1.5; }
+  @media (max-width: 480px) {
+    .leaflet-control-zoom, .leaflet-control-layers { transform: scale(1.15);
+      transform-origin: top left; }
+    .legend, #tally { font-size: 13px; line-height: 1.6; }
+    #dlist { bottom: 195px; }
+    .mk-zone { max-width: 46vw; overflow: hidden; text-overflow: ellipsis; }
+  }
 </style>
 </head>
 <body>
@@ -145,6 +158,7 @@ function zoneStats(z) {
 let N = +(localStorage.getItem("eclipse_n") || 3);
 let YO = localStorage.getItem("eclipse_yo") || "";
 let NOMBRE = localStorage.getItem("eclipse_nombre") || "";
+let tallyOpen = window.innerWidth >= 480;  // phones: start collapsed, big panel eats the map
 let WHO = {};
 function computeWho() {
   const names = Object.values(ZONES)
@@ -328,19 +342,23 @@ tally.onAdd = () => {
   return d;
 };
 tally.addTo(map);
+window.toggleTally = () => { tallyOpen = !tallyOpen; updateTally(); };
 function updateTally() {
+  const toggle = `<a href="#" onclick="toggleTally();return false" style="font-weight:700">` +
+    `${tallyOpen ? "▾" : "▸"} 🗑 ${discarded.size} descartados` +
+    `${NOMBRE ? " · 👤 " + NOMBRE : ""}</a>`;
+  if (!tallyOpen) { document.getElementById("tally").innerHTML = toggle; return; }
   const somos = [2, 3, 4].map(n =>
     N === n ? `<b>[${n}]</b>`
             : `<a href="#" onclick="setN(${n});return false">${n}</a>`).join(" ");
   const yo = Array.from({ length: N }, (_, i) => String(i + 1)).map(n =>
     YO === n ? `<b>[${n}]</b>`
              : `<a href="#" onclick="setYo(${n});return false">${n}</a>`).join(" ");
-  document.getElementById("tally").innerHTML =
+  document.getElementById("tally").innerHTML = toggle + "<br>" +
     `👥 Somos: ${somos} · 👤 Turno: ${yo} <small>(atenúa las zonas de los otros)</small><br>` +
     `🖊️ Nombre: <b>${NOMBRE || "(sin poner)"}</b> ` +
     `<a href="#" onclick="setNombre();return false">${NOMBRE ? "cambiar" : "poner nombre"}</a> ` +
     `<small>(así queda en la hoja al descartar)</small><br>` +
-    `🗑 <b>${discarded.size}</b> descartados · ` +
     `<a href="#" onclick="toggleLista();return false">ver lista</a> · ` +
     `<a href="#" onclick="restaurarTodo();return false">restaurar todos</a><br>` +
     (SHEET_URL
@@ -357,8 +375,7 @@ if (SHEET_URL) sincronizar();
 const legend = L.control({ position: "bottomleft" });
 legend.onAdd = () => {
   const d = L.DomUtil.create("div", "legend");
-  d.innerHTML = `<b>Eclipse 12-08-2026 · barrido viewshed</b><br>
-    Todos los puntos muestran su totalidad en segundos.<br>
+  const body = `Todos los puntos muestran su totalidad en segundos.<br>
     <span class="dot" style="background:#E4572E"></span>Top 1–20 por score (A Mariña)<br>
     <span class="dot" style="background:#2F855A"></span>Compromisos: máx. totalidad por distancia<br>
     Burbuja "Xistral · 94s ×8" = zona con 8 puntos, el mejor de 94 s — clic para abrirla.<br>
@@ -370,6 +387,15 @@ legend.onAdd = () => {
     <span style="color:#C53030">- - -</span> límite sur de la totalidad e isolíneas 30/60/90 s<br>
     <small>Capa opcional "Selección final": 10 elegidos en planes A/B/C.
     Anillos: negro Moaña, gris Portosín. Distancias en línea recta; coche ≈ ×1.3.</small>`;
+  // narrow screens (phones): start collapsed so it doesn't eat the map on load
+  const open = window.innerWidth >= 480;
+  d.innerHTML = `<span id="legend-toggle">ℹ️ Eclipse 12-08-2026 · barrido viewshed</span>` +
+    `<div id="legend-body" style="display:${open ? "block" : "none"}">${body}</div>`;
+  d.querySelector("#legend-toggle").onclick = () => {
+    const b = d.querySelector("#legend-body");
+    b.style.display = b.style.display === "none" ? "block" : "none";
+  };
+  L.DomEvent.disableClickPropagation(d);
   return d;
 };
 legend.addTo(map);
