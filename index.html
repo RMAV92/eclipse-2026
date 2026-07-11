@@ -22,6 +22,12 @@
     font-size: 0; }
   .mk-zone { height: auto; border-radius: 12px; font-size: 11px;
     padding: 3px 9px; white-space: nowrap; cursor: pointer; }
+  .mk-zone-found { animation: zoneFoundPulse 0.6s ease-in-out 3; position: relative; z-index: 10000; }
+  @keyframes zoneFoundPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(43,108,176,.7); }
+    50% { box-shadow: 0 0 0 12px rgba(43,108,176,0); }
+  }
+  @media (prefers-reduced-motion: reduce) { .mk-zone-found { animation: none; outline: 3px solid #2B6CB0; } }
   .mk-casa { background: #1A202C; width: 24px; height: 24px; border-radius: 50%; font-size: 13px; }
   .popup h3 { margin: 0 0 4px; font-size: 14px; }
   .popup table { border-collapse: collapse; }
@@ -186,6 +192,23 @@ function openZone(name) {
   map.addLayer(z.group);
   map.fitBounds(z.bounds.pad(0.25), { maxZoom: 12 });
 }
+// used by the search box: fly to the zone and flash its bubble so it's
+// obviously "found" — does NOT expand into individual points (too cluttered
+// when arriving zoomed-out); tap the highlighted bubble for that, as usual.
+function flyToZone(name) {
+  const z = ZONES[name];
+  if (!z) return;
+  if (!map.hasLayer(lyZonas)) map.addLayer(lyZonas);
+  if (!lyZonas.hasLayer(z.bubble)) lyZonas.addLayer(z.bubble);
+  map.flyTo(z.bounds.getCenter(), Math.max(map.getZoom(), 11), { duration: 0.8 });
+  map.once("moveend", () => {
+    const el = z.bubble.getElement();
+    const inner = el && el.querySelector(".mk-zone");
+    if (!inner) return;
+    inner.classList.add("mk-zone-found");
+    setTimeout(() => inner.classList.remove("mk-zone-found"), 1800);
+  });
+}
 Object.values(ZONES).forEach(z => {
   const lls = z.pts.map(m => m.getLatLng());
   z.bounds = L.latLngBounds(lls);
@@ -213,7 +236,7 @@ function findZone(query) {
 window.doSearch = () => {
   const input = document.getElementById("searchInput");
   const name = findZone(input.value);
-  if (name) { openZone(name); input.value = ""; input.blur(); }
+  if (name) { flyToZone(name); input.value = ""; input.blur(); }
   else if (input.value.trim()) {
     input.style.borderColor = "#C53030";
     setTimeout(() => { input.style.borderColor = ""; }, 900);
