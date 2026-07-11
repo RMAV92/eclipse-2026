@@ -144,6 +144,7 @@ function zoneStats(z) {
 // by size (1..N,N..1) so the load balances and every copy computes the same
 let N = +(localStorage.getItem("eclipse_n") || 3);
 let YO = localStorage.getItem("eclipse_yo") || "";
+let NOMBRE = localStorage.getItem("eclipse_nombre") || "";
 let WHO = {};
 function computeWho() {
   const names = Object.values(ZONES)
@@ -161,6 +162,12 @@ window.setN = n => {
 window.setYo = n => {
   YO = String(n); localStorage.setItem("eclipse_yo", YO);
   refreshBubbles(); updateTally();
+};
+window.setNombre = () => {
+  const n = prompt("Tu nombre (así aparece en la hoja compartida al descartar):", NOMBRE);
+  if (n === null) return;
+  NOMBRE = n.trim(); localStorage.setItem("eclipse_nombre", NOMBRE);
+  updateTally();
 };
 function bubbleIcon(z) {
   const s = zoneStats(z);
@@ -247,7 +254,7 @@ const SHEET_URL = "https://script.google.com/macros/s/AKfycbxZ1MViZXtfklGzcNqHC4
 function postSheet(action, k, why) {
   if (!SHEET_URL) return;
   fetch(SHEET_URL, { method: "POST",
-    body: JSON.stringify({ action, key: k, why: why || "", who: YO }) })
+    body: JSON.stringify({ action, key: k, why: why || "", who: NOMBRE || YO }) })
     .catch(() => {});
 }
 window.sincronizar = async () => {
@@ -262,6 +269,7 @@ window.sincronizar = async () => {
   } catch (e) { alert("No se pudo sincronizar con la hoja: " + e); }
 };
 window.descartar = k => {
+  if (!NOMBRE) setNombre();  // opportunistic: ask once, but don't block a "cancel" from discarding
   const why = prompt("¿Por qué se descarta? (opcional — llega a los demás al compartir)");
   if (why === null) return;  // cancelled: keep the point
   discarded.set(k, why.trim()); applyDiscard(k); map.closePopup(); saveDisc();
@@ -328,7 +336,10 @@ function updateTally() {
     YO === n ? `<b>[${n}]</b>`
              : `<a href="#" onclick="setYo(${n});return false">${n}</a>`).join(" ");
   document.getElementById("tally").innerHTML =
-    `👥 Somos: ${somos} · 👤 Yo soy: ${yo} <small>(atenúa las zonas de los otros)</small><br>` +
+    `👥 Somos: ${somos} · 👤 Turno: ${yo} <small>(atenúa las zonas de los otros)</small><br>` +
+    `🖊️ Nombre: <b>${NOMBRE || "(sin poner)"}</b> ` +
+    `<a href="#" onclick="setNombre();return false">${NOMBRE ? "cambiar" : "poner nombre"}</a> ` +
+    `<small>(así queda en la hoja al descartar)</small><br>` +
     `🗑 <b>${discarded.size}</b> descartados · ` +
     `<a href="#" onclick="toggleLista();return false">ver lista</a> · ` +
     `<a href="#" onclick="restaurarTodo();return false">restaurar todos</a><br>` +
