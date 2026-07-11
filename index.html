@@ -43,6 +43,7 @@
     border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
   .legend small { color: #666; }
   .legend a { padding: 4px 6px; margin: -4px -2px; display: inline-block; }
+  .legend a:active, .popup .links a:active { background: #E2E8F0; border-radius: 4px; }
   #tally { max-width: min(320px, 82vw); max-height: 70vh; overflow-y: auto; }
   #legend-toggle { cursor: pointer; font-weight: 700; }
   #search { background: #fff; padding: 4px; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
@@ -206,6 +207,7 @@ function loadExtras() {
   return extraLoading;
 }
 window.verCercanos = async pk => {
+  if (!EXTRA) toast("Cargando alternativas…");   // first use fetches extras.json
   try { await loadExtras(); } catch (e) { return; }
   const g = lyNear[pk];
   if (!g) return;
@@ -546,8 +548,10 @@ function postSheet(action, k, why) {
   savePending();
   flushQueue();
 }
+let syncing = false;
 window.sincronizar = async (silent) => {
-  if (!SHEET_URL) return;
+  if (!SHEET_URL || syncing) return;
+  syncing = true; updateTally();   // the panel shows "⏳ sincronizando…" meanwhile
   await flushQueue();
   try {
     const raw = await (await fetch(SHEET_URL)).json();
@@ -586,6 +590,7 @@ window.sincronizar = async (silent) => {
     if (!silent) toast(`✓ Sincronizado · 🗑 ${discarded.size}` +
       (sheetV2 ? ` · ⭐ grupo ${Object.keys(groupFavs).length}` : ""));
   } catch (e) { if (!silent) alert("No se pudo sincronizar con la hoja: " + e); }
+  finally { syncing = false; updateTally(); }
 };
 window.descartar = k => {
   if (!NOMBRE) {
@@ -720,36 +725,43 @@ tally.onAdd = () => {
   return d;
 };
 tally.addTo(map);
+let lastTallyHtml = "";
 function updateTally() {
   const toggle = `<a href="#" onclick="toggleTally();return false" style="font-weight:700">` +
     `${tallyOpen ? "▾" : "▸"} 🗑 ${discarded.size} · ⭐ ${favoritos.size}` +
     `${pending.length ? " · ⏳" + pending.length : ""}` +
     `${NOMBRE ? " · 👤 " + NOMBRE : ""}</a>`;
-  if (!tallyOpen) { document.getElementById("tally").innerHTML = toggle; return; }
-  if (tallyView === "list") {
-    document.getElementById("tally").innerHTML = toggle + "<br>" +
+  let html;
+  if (!tallyOpen) html = toggle;
+  else if (tallyView === "list") {
+    html = toggle + "<br>" +
       `<a href="#" onclick="toggleLista();return false">‹ volver</a><br>` + listaHtml();
-    return;
-  }
-  if (tallyView === "favs") {
-    document.getElementById("tally").innerHTML = toggle + "<br>" +
+  } else if (tallyView === "favs") {
+    html = toggle + "<br>" +
       `<a href="#" onclick="toggleFavs();return false">‹ volver</a><br>` + favsHtml();
-    return;
+  } else {
+    html = toggle + "<br>" +
+      (pending.length ? `<small>⏳ ${pending.length} sin enviar (mala cobertura): se reenvían solos.</small><br>` : "") +
+      `🖊️ Tu nombre: <b>${NOMBRE || "sin poner"}</b> ` +
+      `<a href="#" onclick="setNombre();return false">${NOMBRE ? "cambiar" : "ponlo"}</a> ` +
+      `<small>queda junto a cada punto que descartes, para que el grupo sepa quién fue</small><br>` +
+      `<a href="#" onclick="toggleLista();return false">ver descartados</a> · ` +
+      `<a href="#" onclick="toggleFavs();return false">ver favoritos</a> · ` +
+      `<a href="#" onclick="restaurarTodo();return false">restaurar todos</a><br>` +
+      (SHEET_URL
+        ? (syncing ? `<small>⏳ sincronizando con el grupo…</small><br>`
+                   : `<a href="#" onclick="sincronizar();return false">🔄 sincronizar con el grupo</a><br>`)
+        : `<a href="#" onclick="exportarFiltrado();return false">📤 copiar mi filtrado</a> · ` +
+          `<a href="#" onclick="importarFiltrado();return false">📥 importar</a><br>`) +
+      `<a href="#" onclick="replegarZonas();return false">⬆ replegar zonas</a>`;
   }
-  document.getElementById("tally").innerHTML = toggle + "<br>" +
-    (pending.length ? `<small>⏳ ${pending.length} sin enviar (mala cobertura): se reenvían solos.</small><br>` : "") +
-    `🖊️ Tu nombre: <b>${NOMBRE || "sin poner"}</b> ` +
-    `<a href="#" onclick="setNombre();return false">${NOMBRE ? "cambiar" : "ponlo"}</a> ` +
-    `<small>queda junto a cada punto que descartes, para que el grupo sepa quién fue</small><br>` +
-    `<a href="#" onclick="toggleLista();return false">ver descartados</a> · ` +
-    `<a href="#" onclick="toggleFavs();return false">ver favoritos</a> · ` +
-    `<a href="#" onclick="restaurarTodo();return false">restaurar todos</a><br>` +
-    (SHEET_URL
-      ? `<a href="#" onclick="sincronizar();return false">🔄 sincronizar con el grupo</a><br>`
-      : `<a href="#" onclick="exportarFiltrado();return false">📤 copiar mi filtrado</a> · ` +
-        `<a href="#" onclick="importarFiltrado();return false">📥 importar</a><br>`) +
-    `<a href="#" onclick="replegarZonas();return false">⬆ replegar zonas</a>` +
-    `<br><small>Los favoritos ⭐ son solo de tu móvil, no se comparten con el grupo.</small>`;
+  // only touch the DOM when something actually changed: the auto-sync used to
+  // rebuild this panel's innerHTML every few minutes, destroying whatever
+  // button the user was mid-tapping (taps silently swallowed)
+  if (html !== lastTallyHtml) {
+    lastTallyHtml = html;
+    document.getElementById("tally").innerHTML = html;
+  }
 }
 for (const k of discarded.keys()) applyDiscard(k);
 updateTally();
@@ -763,7 +775,7 @@ document.addEventListener("visibilitychange", () => {
 });
 
 const legend = L.control({ position: "bottomleft" });
-const legendBody = `<small style="color:#999">versión 2026-07-11 23:30</small><br>
+const legendBody = `<small style="color:#999">versión 2026-07-11 23:45</small><br>
     Todos los puntos muestran su totalidad en segundos.<br>
     <span class="dot" style="background:#E4572E"></span>Top 1–20 por score (A Mariña)<br>
     <span class="dot" style="background:#2F855A"></span>Compromisos: máx. totalidad por distancia<br>
