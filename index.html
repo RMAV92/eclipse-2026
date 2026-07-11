@@ -73,6 +73,8 @@ const sat = L.tileLayer(
 const map = L.map("map", { layers: [voyager] });
 
 function popupHtml(p, kind) {
+  const key = `${p.lat},${p.lon}`;
+  const isFav = favoritos.has(key);
   const pin = `https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lon}`;
   const gm = `https://www.google.com/maps/@${p.lat},${p.lon},1200m/data=!3m1!1e3`;
   const sv = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${p.lat},${p.lon}&heading=${p.az}&pitch=${p.alt}`;
@@ -95,7 +97,8 @@ function popupHtml(p, kind) {
       <a href="${gm}" target="_blank">satélite (sin pin)</a>
       <a href="${sv}" target="_blank">Street View mirando al eclipse</a>
       <a href="#" onclick="navigator.clipboard.writeText('${coords}');this.textContent='copiado ✓';return false">copiar coords</a>
-      <a href="#" style="color:#C53030" onclick="descartar('${p.lat},${p.lon}');return false">🗑 descartar</a>
+      <a href="#" style="${isFav ? "color:#B7791F;font-weight:700" : ""}" onclick="toggleFavorito('${key}');return false">${isFav ? "★ quitar de favoritos" : "⭐ marcar favorito"}</a>
+      <a href="#" style="color:#C53030" onclick="descartar('${key}');return false">🗑 descartar</a>
     </div></div>`;
 }
 
@@ -104,7 +107,7 @@ function marker(p, cls, kind, style) {
   const icon = L.divIcon({ className: "", iconSize: null,
     html: `<div class="mk ${cls}" style="${style || ""}">${p.label}</div>` });
   return L.marker([p.lat, p.lon], { icon, title: `${kind} · ${p.dur}`, durS: p.dur_s })
-    .bindPopup(popupHtml(p, kind), { maxWidth: 330 });
+    .bindPopup(() => popupHtml(p, kind), { maxWidth: 330 });  // function: regenerated fresh every open, so ★ favorito reflects live state
 }
 function addPt(group, p, cls, kind, style) {
   const m = marker(p, cls, kind, style);
@@ -157,30 +160,8 @@ function zoneStats(z) {
   return { n: alive.length,
            best: alive.length ? Math.max(...alive.map(m => m.options.durS || 0)) : 0 };
 }
-// reviewer split: N people (chosen in the UI), zones dealt serpentine-style
-// by size (1..N,N..1) so the load balances and every copy computes the same
-let N = +(localStorage.getItem("eclipse_n") || 3);
-let YO = localStorage.getItem("eclipse_yo") || "";
 let NOMBRE = localStorage.getItem("eclipse_nombre") || "";
 let tallyOpen = window.innerWidth >= 480;  // phones: start collapsed, big panel eats the map
-let WHO = {};
-function computeWho() {
-  const names = Object.values(ZONES)
-    .sort((a, b) => b.pts.length - a.pts.length || a.name.localeCompare(b.name))
-    .map(z => z.name);
-  WHO = {};
-  const serp = [...Array(N).keys()].concat([...Array(N).keys()].reverse());
-  names.forEach((n, i) => { WHO[n] = String(serp[i % (2 * N)] + 1); });
-}
-window.setN = n => {
-  N = n; localStorage.setItem("eclipse_n", n);
-  if (+YO > n) { YO = ""; localStorage.setItem("eclipse_yo", ""); }
-  computeWho(); refreshBubbles(); updateTally();
-};
-window.setYo = n => {
-  YO = String(n); localStorage.setItem("eclipse_yo", YO);
-  refreshBubbles(); updateTally();
-};
 window.setNombre = () => {
   const n = prompt("¿Cómo te llamas? Quedará junto a cada punto que descartes, en la hoja compartida del grupo:", NOMBRE);
   if (n === null) return;
@@ -189,13 +170,10 @@ window.setNombre = () => {
 };
 function bubbleIcon(z) {
   const s = zoneStats(z);
-  const dim = YO && WHO[z.name] && WHO[z.name] !== YO ? ";opacity:.4" : "";
   return L.divIcon({ className: "", iconSize: null,
-    html: `<div class="mk mk-zone" style="${durStyle(s.best)}${dim}">` +
-          `${z.name} · ${s.best}s ×${s.n} · 👤${WHO[z.name] || "?"}</div>` });
+    html: `<div class="mk mk-zone" style="${durStyle(s.best)}">${z.name} · ${s.best}s ×${s.n}</div>` });
 }
 function refreshBubbles() { Object.values(ZONES).forEach(z => z.bubble.setIcon(bubbleIcon(z))); }
-computeWho();
 function openZone(name) {
   const z = ZONES[name];
   if (!z) return;
@@ -288,13 +266,30 @@ function saveDisc() {
 function applyDiscard(k) {
   REG.forEach(r => { if (r.key === k) r.group.removeLayer(r.marker); });
 }
+// favoritos: personal, per-teléfono (no van a la hoja compartida del grupo,
+// solo el "descartar" es común a todos). Marca sin ocultar el punto.
+const LS_FAV = "eclipse_favoritos";
+function loadFav() {
+  try { return new Map(Object.entries(JSON.parse(localStorage.getItem(LS_FAV) || "{}"))); }
+  catch (e) { return new Map(); }
+}
+let favoritos = loadFav();
+function saveFav() {
+  localStorage.setItem(LS_FAV, JSON.stringify(Object.fromEntries(favoritos)));
+  updateTally();
+}
+window.toggleFavorito = k => {
+  if (favoritos.has(k)) favoritos.delete(k); else favoritos.set(k, "");
+  saveFav();
+  map.closePopup();
+};
 // central Sheet (Apps Script): every discard/restore is posted there and
 // sincronizar() pulls the shared state — the Sheet is the source of truth
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbxZ1MViZXtfklGzcNqHC4VrzrWxf9kMFmJ3saTWzOkPJ890cQXTHxAEh0u6Xo30V6ff/exec";
 function postSheet(action, k, why) {
   if (!SHEET_URL) return;
   fetch(SHEET_URL, { method: "POST",
-    body: JSON.stringify({ action, key: k, why: why || "", who: NOMBRE || YO }) })
+    body: JSON.stringify({ action, key: k, why: why || "", who: NOMBRE }) })
     .catch(() => {});
 }
 window.sincronizar = async () => {
@@ -363,12 +358,20 @@ window.toggleTally = () => {
   updateTally(); renderLegend();
 };
 window.toggleLista = () => { tallyView = tallyView === "list" ? "main" : "list"; updateTally(); };
+window.toggleFavs = () => { tallyView = tallyView === "favs" ? "main" : "favs"; updateTally(); };
 function listaHtml() {
   if (!discarded.size) return "<i>(nada descartado)</i>";
   const title = k => (REG.find(r => r.key === k)?.marker.options.title) || "";
   return [...discarded].map(([k, why]) => `<div class="dlist-entry">` +
     `${title(k)} <small>(${k})</small><br><i>${why || "sin motivo"}</i> — ` +
     `<a href="#" onclick="restaurarUno('${k}');return false">restaurar</a></div>`).join("");
+}
+function favsHtml() {
+  if (!favoritos.size) return "<i>(sin favoritos — márcalos desde el popup de cada punto)</i>";
+  const title = k => (REG.find(r => r.key === k)?.marker.options.title) || "";
+  return [...favoritos.keys()].map(k => `<div class="dlist-entry">` +
+    `⭐ ${title(k)} <small>(${k})</small> — ` +
+    `<a href="#" onclick="toggleFavorito('${k}');return false">quitar</a></div>`).join("");
 }
 const tally = L.control({ position: "bottomright" });
 tally.onAdd = () => {
@@ -380,7 +383,7 @@ tally.onAdd = () => {
 tally.addTo(map);
 function updateTally() {
   const toggle = `<a href="#" onclick="toggleTally();return false" style="font-weight:700">` +
-    `${tallyOpen ? "▾" : "▸"} 🗑 ${discarded.size}` +
+    `${tallyOpen ? "▾" : "▸"} 🗑 ${discarded.size} · ⭐ ${favoritos.size}` +
     `${NOMBRE ? " · 👤 " + NOMBRE : ""}</a>`;
   if (!tallyOpen) { document.getElementById("tally").innerHTML = toggle; return; }
   if (tallyView === "list") {
@@ -388,25 +391,24 @@ function updateTally() {
       `<a href="#" onclick="toggleLista();return false">‹ volver</a><br>` + listaHtml();
     return;
   }
-  const somos = [2, 3, 4].map(n =>
-    N === n ? `<b>[${n}]</b>`
-            : `<a href="#" onclick="setN(${n});return false">${n}</a>`).join(" ");
-  const yo = Array.from({ length: N }, (_, i) => String(i + 1)).map(n =>
-    YO === n ? `<b>[${n}]</b>`
-             : `<a href="#" onclick="setYo(${n});return false">${n}</a>`).join(" ");
+  if (tallyView === "favs") {
+    document.getElementById("tally").innerHTML = toggle + "<br>" +
+      `<a href="#" onclick="toggleFavs();return false">‹ volver</a><br>` + favsHtml();
+    return;
+  }
   document.getElementById("tally").innerHTML = toggle + "<br>" +
-    `👥 Reparto de zonas — sois: ${somos} · tu turno: ${yo} ` +
-    `<small>(solo para atenuar las zonas de los otros, no afecta a los descartes)</small><br>` +
     `🖊️ Tu nombre: <b>${NOMBRE || "sin poner"}</b> ` +
     `<a href="#" onclick="setNombre();return false">${NOMBRE ? "cambiar" : "ponlo"}</a> ` +
     `<small>queda junto a cada punto que descartes, para que el grupo sepa quién fue</small><br>` +
-    `<a href="#" onclick="toggleLista();return false">ver lista</a> · ` +
+    `<a href="#" onclick="toggleLista();return false">ver descartados</a> · ` +
+    `<a href="#" onclick="toggleFavs();return false">ver favoritos</a> · ` +
     `<a href="#" onclick="restaurarTodo();return false">restaurar todos</a><br>` +
     (SHEET_URL
       ? `<a href="#" onclick="sincronizar();return false">🔄 sincronizar con el grupo</a><br>`
       : `<a href="#" onclick="exportarFiltrado();return false">📤 copiar mi filtrado</a> · ` +
         `<a href="#" onclick="importarFiltrado();return false">📥 importar</a><br>`) +
-    `<a href="#" onclick="replegarZonas();return false">⬆ replegar zonas</a>`;
+    `<a href="#" onclick="replegarZonas();return false">⬆ replegar zonas</a>` +
+    `<br><small>Los favoritos ⭐ son solo de tu móvil, no se comparten con el grupo.</small>`;
 }
 for (const k of discarded.keys()) applyDiscard(k);
 updateTally();
