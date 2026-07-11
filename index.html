@@ -40,9 +40,13 @@
   #tally { max-width: min(320px, 82vw); max-height: 70vh; overflow-y: auto; }
   #legend-toggle { cursor: pointer; font-weight: 700; }
   #search { background: #fff; padding: 4px; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+  #search form { display: flex; gap: 4px; }
   #search input { border: 1px solid #ccc; border-radius: 4px; padding: 6px 8px;
-    font-size: 16px; width: 168px; max-width: 46vw; }
+    font-size: 16px; width: 168px; max-width: 40vw; }
   #search input:focus { outline: 2px solid #2B6CB0; border-color: #2B6CB0; }
+  #search button { border: 1px solid #ccc; border-radius: 4px; background: #f5f5f5;
+    font-size: 16px; padding: 0 10px; cursor: pointer; }
+  #search button:active { background: #e2e8f0; }
   .dlist-entry { padding: 6px 0; border-top: 1px solid #eee; }
   .dlist-entry:first-child { border-top: none; }
   @media (max-width: 480px) {
@@ -191,23 +195,46 @@ Object.values(ZONES).forEach(z => {
   lyZonas.addLayer(z.bubble);
 });
 
-// zone search: type-ahead over the 16 fixed zone names, jumps like clicking its bubble
+// zone search: type-ahead over the 16 fixed zone names, jumps like clicking its bubble.
+// A <form> (not a bare input) is what makes mobile keyboards fire a "Go/Buscar"
+// submit reliably; matching is accent/case-insensitive and accepts partial text
+// ("xistral" -> "Serra do Xistral"), since exact-match-only was unusable on phones.
+function normZ(s) {
+  return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+}
+function findZone(query) {
+  const q = normZ(query);
+  if (!q) return null;
+  const names = Object.keys(ZONES);
+  return names.find(n => normZ(n) === q) ||
+         names.find(n => normZ(n).startsWith(q)) ||
+         names.find(n => normZ(n).includes(q)) || null;
+}
+window.doSearch = () => {
+  const input = document.getElementById("searchInput");
+  const name = findZone(input.value);
+  if (name) { openZone(name); input.value = ""; input.blur(); }
+  else if (input.value.trim()) {
+    input.style.borderColor = "#C53030";
+    setTimeout(() => { input.style.borderColor = ""; }, 900);
+  }
+  return false;
+};
 const search = L.control({ position: "topleft" });
 search.onAdd = () => {
   const d = L.DomUtil.create("div", "legend");
   d.id = "search";
-  d.innerHTML = `<input id="searchInput" list="zoneList" placeholder="🔍 Buscar zona…" autocomplete="off">` +
+  d.innerHTML = `<form id="searchForm" onsubmit="return doSearch()">` +
+    `<input id="searchInput" list="zoneList" placeholder="Buscar zona…" autocomplete="off" enterkeyhint="search">` +
+    `<button type="submit" aria-label="Buscar zona">🔍</button>` +
     `<datalist id="zoneList">${Object.keys(ZONES).sort()
-      .map(n => `<option value="${n}">`).join("")}</datalist>`;
+      .map(n => `<option value="${n}">`).join("")}</datalist></form>`;
   L.DomEvent.disableClickPropagation(d);
   L.DomEvent.disableScrollPropagation(d);
   return d;
 };
 search.addTo(map);
-document.getElementById("searchInput").addEventListener("change", e => {
-  openZone(e.target.value);
-  e.target.value = ""; e.target.blur();
-});
+document.getElementById("searchInput").addEventListener("change", () => doSearch());
 window.replegarZonas = () => {
   Object.values(ZONES).forEach(z => {
     map.removeLayer(z.group);
