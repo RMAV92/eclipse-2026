@@ -286,7 +286,14 @@ let tallyOpen = window.innerWidth >= 480;  // phones: start collapsed, big panel
 window.setNombre = () => {
   const n = prompt("¿Cómo te llamas? Quedará junto a cada punto que descartes, en la hoja compartida del grupo:", NOMBRE);
   if (n === null) return;
-  NOMBRE = n.trim(); localStorage.setItem("eclipse_nombre", NOMBRE);
+  const t = n.trim();
+  // someone in the group typed the discard REASON into this dialog and now
+  // signs as "Alto poo pero poco diferencial..." — catch sentence-like names
+  if (t && (t.length > 25 || t.split(/\s+/).length > 3) &&
+      !confirm(`«${t}» parece un motivo más que un nombre. ¿Usarlo como tu nombre igualmente?`)) {
+    return setNombre();
+  }
+  NOMBRE = t; localStorage.setItem("eclipse_nombre", NOMBRE);
   updateTally();
 };
 function bubbleIcon(z) {
@@ -388,6 +395,12 @@ window.gotoKey = async k => {
   if (!r) {  // maybe it's a walking alternative whose details aren't loaded yet
     try { await loadExtras(); } catch (e) { return; }
     r = REG.find(r => r.key === k);
+  }
+  // a discarded point has no visible marker: without this notice, searching
+  // its ID flies to empty terrain in silence and looks like a broken search
+  if (discarded.has(k)) {
+    const why = discarded.get(k);
+    toast(`⚠️ ${KEY2ID[k] || k} está descartado${why ? `: ${why}` : ""} — restaurable en «ver descartados»`);
   }
   gotoMarker(r);
 };
@@ -821,7 +834,7 @@ document.addEventListener("visibilitychange", () => {
 });
 
 const legend = L.control({ position: "bottomleft" });
-const legendBody = `<small style="color:#999">versión 2026-07-12 00:47</small><br>
+const legendBody = `<small style="color:#999">versión 2026-07-12 12:04</small><br>
     Todos los puntos muestran su totalidad en segundos.<br>
     <span class="dot" style="background:#E4572E"></span>Top 1–20 por score (A Mariña)<br>
     <span class="dot" style="background:#2F855A"></span>Compromisos: máx. totalidad por distancia<br>
