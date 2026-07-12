@@ -114,19 +114,6 @@ function popupHtml(p, kind) {
   const isFav = favoritos.has(key);
   const pin = `https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lon}`;
   const gm = `https://www.google.com/maps/@${p.lat},${p.lon},1200m/data=!3m1!1e3`;
-  // Street View anchored at the nearest ROAD point (rvlat/rvlon): panos live
-  // on driven roads, not in the middle of a meadow — anchoring there is the
-  // best keyless availability proxy. Two pre-set headings: sun (horizon
-  // check) and toward the candidate (which hill is it).
-  const svq = h => `https://www.google.com/maps/@?api=1&map_action=pano` +
-    `&viewpoint=${p.rvlat},${p.rvlon}&heading=${h}&pitch=`;
-  const svSol = svq(p.az) + Math.max(p.alt - 2, 0);
-  const brg = Math.round((Math.atan2(
-    (p.lon - p.rvlon) * Math.cos(p.lat * Math.PI / 180),
-    p.lat - p.rvlat) * 180 / Math.PI + 360) % 360);
-  const svPto = svq(brg) + "0";
-  const svAqui = p.rvd < 30;      // paved anchor ≈ the candidate itself
-  const svLejos = p.rvd > 2000;   // no paved road nearby: pano very unlikely, hide links
   const coords = `${p.lat}, ${p.lon}`;
   return `<div class="popup">
     <h3><span style="background:#EDF2F7;border-radius:4px;padding:1px 6px;font-family:monospace">${p.id}</span> ${kind} · ${coords}</h3>
@@ -136,7 +123,7 @@ function popupHtml(p, kind) {
       <tr><td>Desde Moaña</td><td><b>${p.dmoa} km</b> línea recta (~${Math.round(p.dmoa*1.3)} km coche)</td></tr>
       <tr><td>Desde Portosín</td><td>${p.dpor} km línea recta</td></tr>
       <tr><td>Elevación</td><td>${p.elev} m · prominencia ${p.prom} m</td></tr>
-      <tr><td>Carretera</td><td>a ${p.road} m</td></tr>
+      <tr><td>Carretera</td><td>a ${p.road} m · asfalto a ${p.rvd} m</td></tr>
       <tr><td>Brújula</td><td>sol al <b>${p.az}°</b> (O), a ${p.alt}° de altura</td></tr>
       <tr><td>Score esperado</td><td>${p.score} (p despejado ${p.p})</td></tr>
       ${p.boira ? "<tr><td>Boira</td><td>⚠️ sobre niebla habitual</td></tr>" : ""}
@@ -144,9 +131,6 @@ function popupHtml(p, kind) {
     <div class="links">
       <a href="${pin}" target="_blank">📍 punto en Google Maps</a>
       <a href="${gm}" target="_blank">satélite (sin pin)</a>
-      ${svLejos ? `<span style="color:#888">🛣 sin carretera asfaltada cerca (~${(p.rvd/1000).toFixed(1)} km) — Street View improbable</span>`
-        : `<a href="${svSol}" target="_blank">🛣 Street View ${svAqui ? "aquí" : `en el asfalto (a ${p.rvd} m)`} → mirando al eclipse (${p.az}°)</a>` +
-          (svAqui ? "" : `<a href="${svPto}" target="_blank">🛣 Street View → mirando hacia el punto (${brg}°)</a>`)}
       <a href="#" onclick="navigator.clipboard.writeText('${coords}');this.textContent='copiado ✓';return false">copiar coords</a>
       <a href="#" onclick="navigator.clipboard.writeText('${p.id}');this.textContent='copiado ✓';return false">copiar ID ${p.id}</a>
       ${(D.cercanos && D.cercanos[key]) ? `<a href="#" onclick="verCercanos('${key}');return false">🚶 ${D.cercanos[key].length} alternativas a pie</a>` : ""}
@@ -841,7 +825,7 @@ document.addEventListener("visibilitychange", () => {
 });
 
 const legend = L.control({ position: "bottomleft" });
-const legendBody = `<small style="color:#999">versión 2026-07-12 15:13</small><br>
+const legendBody = `<small style="color:#999">versión 2026-07-12 18:42</small><br>
     <a href="madrid.html">🔁 Mapa Meseta Norte (base Madrid)</a><br>
     Todos los puntos muestran su totalidad en segundos.<br>
     <span class="dot" style="background:#E4572E"></span>Top 1–20 por score (A Mariña)<br>
