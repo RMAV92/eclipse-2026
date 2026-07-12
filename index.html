@@ -127,7 +127,7 @@ function popupHtml(p, kind) {
       <tr><td>Brújula</td><td>sol al <b>${p.az}°</b> (O), a ${p.alt}° de altura</td></tr>
       <tr><td>Score esperado</td><td>${p.score} (p despejado ${p.p})</td></tr>
       ${p.boira ? "<tr><td>Boira</td><td>⚠️ sobre niebla habitual</td></tr>" : ""}
-      ${p.wt ? `<tr><td>Molinos</td><td>⚠️ ${p.wt} aerogenerador${p.wt > 1 ? "es" : ""} hacia el sol (el más cercano a ~${p.wtd} m)</td></tr>` : ""}
+      ${p.wt ? `<tr><td>Molinos</td><td>🌬 ${p.wt} aerogenerador${p.wt > 1 ? "es" : ""} hacia el sol, el más cercano a ~${p.wtd} m — buena señal de pista y terreno despejado; comprobar que ninguno cruce la vista</td></tr>` : ""}
     </table>
     <div class="links">
       <a href="${pin}" target="_blank">📍 punto en Google Maps</a>
@@ -864,7 +864,7 @@ document.addEventListener("visibilitychange", () => {
 });
 
 const legend = L.control({ position: "bottomleft" });
-const legendBody = `<small style="color:#999">versión 2026-07-12 20:19</small><br>
+const legendBody = `<small style="color:#999">versión 2026-07-12 20:43</small><br>
     <a href="madrid.html">🔁 Mapa Meseta Norte (base Madrid)</a><br>
     Todos los puntos muestran su totalidad en segundos.<br>
     <span class="dot" style="background:#E4572E"></span>Top 1–20 por score (A Mariña)<br>
