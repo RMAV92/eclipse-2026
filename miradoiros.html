@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Eclipse 12-ago · 6 miradoiros desde Portosín</title>
+</head>
+<body>
+<style>
+  /* dusk-biased neutrals (violet-grey, not cream); one amber accent = the sun */
+  :root {
+    --bg: #F7F6FA; --surface: #FFFFFF; --line: #E2E0EA;
+    --ink: #24222E; --muted: #6B6878; --faint: #908DA0;
+    --accent: #B45309; --accent-ink: #8A3E05;
+    --go: #1F7A46; --warn: #A05A00; --bad: #B3372E;
+    --chip: #EFEDF5; --bar: #ECE9F3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17161D; --surface: #201F28; --line: #33313E;
+      --ink: #ECEAF2; --muted: #A5A2B3; --faint: #7C7990;
+      --accent: #F0A144; --accent-ink: #F6B96F;
+      --go: #5DC389; --warn: #E5A94E; --bad: #E07A72;
+      --chip: #2A2833; --bar: #2E2C39;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17161D; --surface: #201F28; --line: #33313E;
+    --ink: #ECEAF2; --muted: #A5A2B3; --faint: #7C7990;
+    --accent: #F0A144; --accent-ink: #F6B96F;
+    --go: #5DC389; --warn: #E5A94E; --bad: #E07A72;
+    --chip: #2A2833; --bar: #2E2C39;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    margin: 0; padding: 2rem 1rem 4rem;
+  }
+  main { max-width: 46rem; margin: 0 auto; }
+  .serif { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; }
+  .mono { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace; }
+  .num { font-variant-numeric: tabular-nums; }
+
+  header { margin-bottom: 2.2rem; }
+  .eyebrow {
+    text-transform: uppercase; letter-spacing: .14em; font-size: .72rem;
+    color: var(--accent); font-weight: 600; display: flex; align-items: center; gap: .55rem;
+  }
+  /* the moment itself: sun disc with the moon almost across it */
+  .glyph { width: 16px; height: 16px; border-radius: 50%; flex: none;
+    background: radial-gradient(circle at 68% 45%, var(--accent) 0 100%);
+    box-shadow: inset -5px 0 0 0 var(--bg); border: 1px solid var(--accent); }
+  h1 { margin: .5rem 0 .4rem; font-size: 1.9rem; line-height: 1.15; text-wrap: balance; font-weight: 600; }
+  .stand { color: var(--muted); max-width: 40rem; margin: 0; }
+  .stand b { color: var(--ink); font-weight: 600; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    padding: 1rem 1.1rem; margin-bottom: .8rem;
+    display: grid; grid-template-columns: 6.4rem 1fr auto; gap: .35rem 1rem; align-items: start;
+  }
+  .drive { grid-row: span 2; }
+  .drive .t { font-size: 1.45rem; font-weight: 650; letter-spacing: -.01em; }
+  .drive .sub { font-size: .74rem; color: var(--muted); line-height: 1.35; margin-top: .15rem; }
+  .drive .toll { color: var(--warn); }
+  .who { display: flex; flex-wrap: wrap; align-items: baseline; gap: .45rem; }
+  .id { background: var(--chip); border-radius: 5px; padding: .05rem .4rem; font-size: .8rem; }
+  .name { font-weight: 650; }
+  .muni { color: var(--muted); font-size: .86rem; }
+  .tot { text-align: right; }
+  .tot .d { font-size: 1.45rem; font-weight: 650; color: var(--accent-ink); }
+  .tot .bar { width: 5.4rem; height: 4px; border-radius: 2px; background: var(--bar); margin: .35rem 0 0 auto; }
+  .tot .bar i { display: block; height: 100%; border-radius: 2px; background: var(--accent); }
+  .meta { grid-column: 2 / 4; color: var(--muted); font-size: .86rem; }
+  .meta .ok { color: var(--go); } .meta .w { color: var(--warn); } .meta .b { color: var(--bad); }
+  .links { grid-column: 2 / 4; display: flex; flex-wrap: wrap; gap: .4rem .9rem; font-size: .84rem; }
+  .links a { color: var(--accent-ink); text-decoration: none; border-bottom: 1px solid var(--line); }
+  .links a:hover, .links a:focus-visible { border-bottom-color: var(--accent); outline: none; }
+  .links .off { color: var(--faint); border-bottom: none; }
+
+  h2 { font-size: 1.05rem; margin: 2.4rem 0 .8rem; }
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: .84rem; min-width: 44rem; }
+  th, td { padding: .5rem .7rem; text-align: right; white-space: nowrap; }
+  th:first-child, td:first-child { text-align: left; }
+  thead th { color: var(--muted); font-weight: 600; font-size: .74rem; text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid var(--line); }
+  tbody tr + tr td { border-top: 1px solid var(--line); }
+  td.ok { color: var(--go); } td.w { color: var(--warn); }
+
+  .notes { color: var(--muted); font-size: .9rem; }
+  .notes p { margin: .55rem 0; max-width: 42rem; }
+  .notes b { color: var(--ink); font-weight: 600; }
+  footer { margin-top: 2.6rem; color: var(--faint); font-size: .78rem; border-top: 1px solid var(--line); padding-top: .9rem; }
+  @media (max-width: 540px) {
+    .card { grid-template-columns: 1fr auto; }
+    .drive { grid-row: auto; grid-column: 1; order: 3; display: flex; align-items: baseline; gap: .6rem; }
+    .drive .t { font-size: 1.2rem; }
+    .meta, .links { grid-column: 1 / 3; }
+  }
+</style>
+
+<main>
+<header>
+  <div class="eyebrow"><span class="glyph" aria-hidden="true"></span>Eclipse total · miércoles 12-ago-2026 · totalidad ~20:28</div>
+  <h1 class="serif">Seis miradoiros desde Portosín, ordenados por coche real</h1>
+  <p class="stand">Los seis están en el interior de Lugo/A&nbsp;Coruña, fuera de la nube costera, y
+  <b>MeteoGalicia a 1&nbsp;km da 1,00 en todos</b> — el cielo no elige por ti.
+  Elige el intercambio: <b>cada escalón de coche compra segundos de totalidad</b>.
+  El sol estará a 280° (ONO) y solo 11–12° de altura: horizonte limpio hacia poniente, obligatorio.</p>
+
+<p style="margin:.9rem 0 0;padding:.6rem .8rem;border:1.5px solid #B45309;border-radius:8px;font-size:.95rem">
+🗺 <b>Mapa interactivo del grupo</b> (fichas completas, triaje y meteo al día):
+<a href="galicia.html" style="color:inherit;font-weight:600">abrir el mapa</a>
+</p>
+</header>
+
+<!-- order = real driving time; the big number IS the ranking -->
+<section aria-label="Miradoiros ordenados por tiempo de coche">
+
+  <article class="card">
+    <div class="drive num"><div class="t">1h31</div>
+      <div class="sub">103 km · sin peaje<br>(AP-9 solo tramo urbano libre)</div></div>
+    <div class="who"><span class="id mono">TCURD</span><span class="name">Palas de Rei</span><span class="muni">728 m · dorsal de A Ulloa</span></div>
+    <div class="tot num"><div class="d">1m01s</div><div class="bar"><i style="width:61%"></i></div></div>
+    <div class="meta">C2 20:28:29 · <span class="ok">coche hasta 126 m por vía local buena</span> ·
+      celda más unánime de Galicia: 122/122 miembros despejados · AEMET Despejado ·
+      oficiales de Palas (Pambre, Os Chacotes) a 7–8 km: tráfico de vuelta por la N-547</div>
+    <div class="links num">
+      <a href="https://www.google.com/maps/search/?api=1&amp;query=42.91989,-7.93898">📍 Pin</a>
+      <a href="https://www.google.com/maps/dir/?api=1&amp;origin=42.763,-8.919&amp;destination=42.91989,-7.93898">🚗 Ruta</a>
+      <a href="https://www.google.com/maps/@?api=1&amp;map_action=pano&amp;viewpoint=42.92068,-7.93787">👁 Street View (a 126 m)</a>
+    </div>
+  </article>
+
+  <article class="card">
+    <div class="drive num"><div class="t">1h40</div>
+      <div class="sub">105 km · sin peaje</div></div>
+    <div class="who"><span class="id mono">2MH75</span><span class="name">Toques</span><span class="muni">780 m · mismo cordal, +52 m</span></div>
+    <div class="tot num"><div class="d">1m04s</div><div class="bar"><i style="width:64%"></i></div></div>
+    <div class="meta">C2 20:28:27 · <span class="w">pista; el asfalto queda a ~1 km</span> — plan B de TCURD:
+      misma celda meteo, a 2 km · mejor balcón (prominencia 249 m)</div>
+    <div class="links num">
+      <a href="https://www.google.com/maps/search/?api=1&amp;query=42.93202,-7.91878">📍 Pin</a>
+      <a href="https://www.google.com/maps/dir/?api=1&amp;origin=42.763,-8.919&amp;destination=42.93202,-7.91878">🚗 Ruta</a>
+      <span class="off">👁 Street View no fiable aquí (ancla a 983 m)</span>
+    </div>
+  </article>
+
+  <article class="card">
+    <div class="drive num"><div class="t">1h57</div>
+      <div class="sub">145 km · <span class="toll">peaje AP-9 ≈6–8 €/sentido</span><br>libre por Sigüeiro: 2h11 (150 km)</div></div>
+    <div class="who"><span class="id mono">U8489</span><span class="name">Guitiriz</span><span class="muni">656 m</span></div>
+    <div class="tot num"><div class="d">1m28s</div><div class="bar"><i style="width:88%"></i></div></div>
+    <div class="meta">C2 20:27:45 · <span class="w">asfalto a 1,1 km por vía floja</span> · reserva natural de VM8EG
+      (misma celda, a 1,7 km) · spread 0,03</div>
+    <div class="links num">
+      <a href="https://www.google.com/maps/search/?api=1&amp;query=43.21094,-7.78472">📍 Pin</a>
+      <a href="https://www.google.com/maps/dir/?api=1&amp;origin=42.763,-8.919&amp;destination=43.21094,-7.78472">🚗 Ruta</a>
+      <span class="off">👁 Street View no fiable aquí (ancla a 690 m)</span>
+    </div>
+  </article>
+
+  <article class="card">
+    <div class="drive num"><div class="t">1h59</div>
+      <div class="sub">149 km · <span class="toll">peaje AP-9 ≈6–8 €/sentido</span><br>libre por Sigüeiro: 2h12 (155 km)</div></div>
+    <div class="who"><span class="id mono">VM8EG</span><span class="name">Pena do Miradoiro</span><span class="muni">Guitiriz · 655 m</span></div>
+    <div class="tot num"><div class="d">1m28s</div><div class="bar"><i style="width:88%"></i></div></div>
+    <div class="meta">C2 20:27:44 · <span class="ok">asfalto bueno a 282 m, pista a 16 m</span> ·
+      <span class="ok">cero restricciones en 10 km</span> · el compromiso redondo: todas las señales limpias ·
+      <span class="w">ese día el concello celebra su Romaría da Eclipse en Santa Mariña (a 6–14 km): tráfico local extra</span></div>
+    <div class="links num">
+      <a href="https://www.google.com/maps/search/?api=1&amp;query=43.22442,-7.77921">📍 Pin</a>
+      <a href="https://www.google.com/maps/dir/?api=1&amp;origin=42.763,-8.919&amp;destination=43.22442,-7.77921">🚗 Ruta</a>
+      <a href="https://www.google.com/maps/@?api=1&amp;map_action=pano&amp;viewpoint=43.22442,-7.77921">👁 Street View (a 282 m)</a>
+    </div>
+  </article>
+
+  <article class="card">
+    <div class="drive num"><div class="t">2h32</div>
+      <div class="sub">193 km · sin peaje<br>¡más rápido que Castroverde!</div></div>
+    <div class="who"><span class="id mono">37ATB</span><span class="name">Serra de Meira</span><span class="muni">favorito del grupo</span></div>
+    <div class="tot num"><div class="d">1m40s</div><div class="bar"><i style="width:100%"></i></div></div>
+    <div class="meta">La totalidad máxima de la lista · <span class="w">punto oficial de la Xunta a 2,6 km — acceso compartido,
+      llegar con margen</span> · spread 0,19</div>
+    <div class="links num">
+      <a href="https://www.google.com/maps/search/?api=1&amp;query=43.24193,-7.25398">📍 Pin</a>
+      <a href="https://www.google.com/maps/dir/?api=1&amp;origin=42.763,-8.919&amp;destination=43.24193,-7.25398">🚗 Ruta</a>
+    </div>
+  </article>
+
+  <article class="card">
+    <div class="drive num"><div class="t">2h38</div>
+      <div class="sub">177 km · sin peaje<br>(menos km, pistas de montaña)</div></div>
+    <div class="who"><span class="id mono">KU4NV</span><span class="name">Castroverde</span><span class="muni">1.016 m · el gran balcón</span></div>
+    <div class="tot num"><div class="d">1m34s</div><div class="bar"><i style="width:94%"></i></div></div>
+    <div class="meta">C2 20:27:52 · <span class="ok">coche hasta 81 m</span> · prominencia 316 m, mejor histórico (0,84) ·
+      punto oficial Mirador da Lomba a 5,9 km ·
+      <span class="b">⚠️ único con AEMET "Intervalos nubosos, 20 %"</span> — etiqueta de día entero, vigilar mañana</div>
+    <div class="links num">
+      <a href="https://www.google.com/maps/search/?api=1&amp;query=43.0735,-7.29255">📍 Pin</a>
+      <a href="https://www.google.com/maps/dir/?api=1&amp;origin=42.763,-8.919&amp;destination=43.0735,-7.29255">🚗 Ruta</a>
+      <a href="https://www.google.com/maps/@?api=1&amp;map_action=pano&amp;viewpoint=43.07357,-7.29155">👁 Street View (a 81 m)</a>
+    </div>
+  </article>
+</section>
+
+<h2 class="serif">Todas las señales, lado a lado</h2>
+<div class="tablewrap"><table class="num">
+  <thead><tr>
+    <th>Punto</th><th>Coche</th><th>Sin peaje</th><th>Totalidad</th>
+    <th>MeteoGalicia 1 km</th><th>8 modelos</th><th>Spread</th><th>Ensembles</th><th>Hist. 26 a</th><th>AEMET</th>
+  </tr></thead>
+  <tbody>
+    <tr><td class="mono">TCURD</td><td>1h31</td><td>=</td><td>1m01s</td><td class="ok">1,00</td><td>1,00</td><td>0,02</td><td class="ok">122/122</td><td>0,85</td><td class="ok">Despejado</td></tr>
+    <tr><td class="mono">2MH75</td><td>1h40</td><td>=</td><td>1m04s</td><td class="ok">1,00</td><td>1,00</td><td>0,02</td><td class="ok">122/122</td><td>0,85</td><td class="ok">Despejado</td></tr>
+    <tr><td class="mono">U8489</td><td>1h57</td><td>2h11</td><td>1m28s</td><td class="ok">1,00</td><td>0,99</td><td>0,03</td><td>1,00/0,97/1,00</td><td>0,81</td><td class="ok">Despejado</td></tr>
+    <tr><td class="mono">VM8EG</td><td>1h59</td><td>2h12</td><td>1m28s</td><td class="ok">1,00</td><td>0,99</td><td>0,03</td><td>1,00/0,97/1,00</td><td>0,81</td><td class="ok">Despejado</td></tr>
+    <tr><td class="mono">37ATB</td><td>2h32</td><td>=</td><td>1m40s</td><td class="ok">1,00</td><td>0,92</td><td>0,19</td><td>1,00/0,95/1,00</td><td>0,80</td><td class="ok">Despejado</td></tr>
+    <tr><td class="mono">KU4NV</td><td>2h38</td><td>=</td><td>1m34s</td><td class="ok">1,00</td><td>0,96</td><td>0,14</td><td>1,00/0,95/0,97</td><td>0,84</td><td class="w">Intervalos ⚠️</td></tr>
+  </tbody>
+</table></div>
+
+<h2 class="serif">Qué dicen las instituciones (repaso 10-ago)</h2>
+<div class="notes">
+  <p><b>Ninguno de los seis tiene punto de exclusión en 20 km.</b> Los 29 lugares vetados por la
+  Delegación del Gobierno (28-jul) son casi todos costa y cumbres emblemáticas; el interior de la lista queda limpio.
+  Ojo: esa lista es transcripción de prensa, no dataset oficial — sigue siendo provisional.</p>
+  <p><b>DGT (notas del 3 y 6-ago):</b> sin cortes específicos en Galicia (los camiones se restringen en
+  Cataluña/Navarra/PV). Lo que sí aplica aquí: <b>prohibición absoluta de parar en arcén o calzada</b> para mirar,
+  solo aparcamientos autorizados, y controles de aforo en emplazamientos concurridos. El momento crítico
+  declarado es <b>la vuelta</b>, todos a la vez tras la totalidad: escalonar el regreso o cenar allí.</p>
+  <p><b>Guardia Civil (8-ago):</b> 24.000 agentes; en A Coruña sus 27 puntos con presencia son
+  playas y costa — ni Toques, ni Melide, ni Palas figuran. En Lugo, la Subdelegación coordinó el 7-ago el
+  operativo sobre los puntos autorizados y sus accesos: vigilancia reforzada en las rutas principales, no cierres.</p>
+  <p><b>Concellos y diputaciones:</b> sin bandos en Palas de Rei, Toques, Guitiriz, Meira ni Castroverde.
+  Melide solo hizo divulgación (charlas en junio). La Diputación de Lugo participa en la coordinación, sin medidas propias.</p>
+  <p><b>Traducción práctica:</b> llegar con luz, aparcar de verdad (no en el arcén: multa y grúa aparte,
+  la GC patrullará justo eso), y contar con vuelta lenta — en TCURD/2MH75 la N-547 recogerá también
+  el público de los puntos oficiales de Palas.</p>
+</div>
+
+<h2 class="serif">Prensa por concellos (repaso 10-ago)</h2>
+<div class="notes">
+  <p><b>Guitiriz — el único de los cinco con evento propio.</b> El concello organiza la
+  <b>Romaría da Eclipse Solar</b> el 12: 19:00 concierto en el Campo da Festa de Santa Mariña,
+  19:30 observación en el Monólito Irmáns da Lexía, 20:45 sigue la música; <b>gafas homologadas
+  gratis</b> (de la Diputación, hasta agotar). La parroquia queda a 6–14 km de VM8EG/U8489 según
+  el núcleo — no es nuestro punto, pero moverá gente y coches por el concello esa tarde.</p>
+  <p><b>Área de A Coruña (9 concellos con actividades) — todos costa o metro:</b> Arteixo corta el
+  tráfico a las playas de 16:00 a 21:30, Bergondo limita Gandarío a 4.000 personas, Miño monta pantallas
+  gigantes, Oleiros despliega más de 100 efectivos. <b>Ni Toques, ni Melide, ni Sobrado, ni Curtis, ni
+  Aranga aparecen</b>: el interior rural sigue fuera del radar — la marea va a la costa, que es justo
+  donde la meteo dice que no hay que estar.</p>
+  <p><b>Palas de Rei, Meira, Castroverde, Toques:</b> sin actividades propias en prensa a día 10.
+  Sus puntos oficiales (Pambre y Os Chacotes, Serra de Meira, Mirador da Lomba) vienen de la lista de la
+  Delegación y tendrán presencia de la GC. Melide solo hizo charlas divulgativas en junio.</p>
+  <p><b>Diputación de Lugo:</b> portal propio del eclipse y reparto de gafas homologadas a través de los
+  concellos — si vais sin gafas, la romaría de Guitiriz las regala.</p>
+</div>
+
+<h2 class="serif">Cómo leer esto</h2>
+<div class="notes">
+  <p><b>Por qué no hay costa en la lista.</b> Los puntos de 1m46–1m48 (Cervo, Burela, Xove…) pagan sus
+  segundos extra con una discusión real entre modelos: MeteoGalicia a 1 km e ICON ven estrato marino que
+  ECMWF y GFS no resuelven — su consenso cae a 0,57–0,74. Aquí los seis son interior: todas las fuentes de acuerdo.</p>
+  <p><b>Van en parejas.</b> TCURD+2MH75 comparten celda meteo (a 2 km), y U8489+VM8EG también (a 1,7 km):
+  mismo cielo garantizado, plan A por acceso y plan B a minutos si el sitio está lleno.</p>
+  <p><b>El orden es tiempo real de coche, no km.</b> Meira (193 km, 2h32) llega antes que Castroverde
+  (177 km, 2h38): el final de Castroverde va por pistas de montaña lentas. Tiempos OSRM orientativos, ±10 %;
+  peaje AP-9 estimado con la tarifa 2026 (Coruña–Santiago 8,80 €).</p>
+  <p><b>Esto es la pasada de hoy (D−2).</b> Lo fuerte no es el 1,00 de hoy sino que aguante: si mañana
+  MeteoGalicia e ICON siguen limpios en el interior, el plan queda confirmado. El horizonte ONO de
+  TCURD/2MH75 no está verificado — comprobar en Street View / in situ que nada tape a 11–12°.</p>
+</div>
+
+<footer class="num">
+  Datos: pasada 00 UTC del 10-ago-2026 · Open-Meteo (8 modelos + 122 miembros de ensemble) ·
+  MeteoSIX/MeteoGalicia (WRF 1 km) · AEMET municipal · histórico ERA5 2000–2025 ·
+  rutas OSRM desde Portosín (42.763, −8.919). Fichas completas en el mapa del grupo.
+</footer>
+</main>
+
+</body>
+</html>
