@@ -166,6 +166,19 @@ function wxRow(p) {
     bits.push(`${n} modelos, ${ac} (rango ${pct(c.spread)})`);
   }
   if (c.pens != null) bits.push(`ensembles ${pct(c.pens)} de escenarios despejados`);
+  if (c.mg != null) {
+    // the grid matters as much as the number: at 1 km MeteoGalicia resolves
+    // coastal stratus the globals average away (and then it votes in cons);
+    // at 4/12 km it is a near-constant optimist, shown but not counted
+    if (c.mg_grid === "1km") {
+      const cisma = c.om != null && c.om - c.mg >= 0.15;
+      bits.push(cisma
+        ? `⚠️ MeteoGalicia 1 km ${pct(c.mg)} — ve nube costera que los modelos globales no resuelven`
+        : `MeteoGalicia 1 km ${pct(c.mg)}`);
+    } else {
+      bits.push(`MeteoGalicia ${c.mg_grid} ${pct(c.mg)} (informativo, no vota)`);
+    }
+  }
   if (c.hist != null) bits.push(`histórico ${pct(c.hist)} de años despejados`);
   return bits.length ? `<tr><td>Meteo</td><td><b>${head}</b> · ${bits.join(" · ")}</td></tr>` : "";
 }
@@ -1044,7 +1057,7 @@ document.addEventListener("visibilitychange", () => {
 });
 
 const legend = L.control({ position: "bottomleft" });
-const legendBody = `<small style="color:#999">versión 2026-08-09 18:07</small><br>
+const legendBody = `<small style="color:#999">versión 2026-08-10 12:24</small><br>
     <a href="./">🔁 Elegir otra zona</a><br><a href="galicia.html">🔁 Mapa Galicia (grupo de Ramón)</a><br>
     Todos los puntos muestran su totalidad en segundos.<br>
     <span class="dot" style="background:#E4572E"></span>Top 1–20 por score (Ancares–Tierra de Campos)<br>
