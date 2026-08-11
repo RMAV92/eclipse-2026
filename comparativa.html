@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Eclipse 12-ago · comparativa de puntos en análisis (Galicia)</title>
+<style>
+  :root {
+    --bg: #F7F6FA; --surface: #FFFFFF; --line: #E2E0EA;
+    --ink: #24222E; --muted: #6B6878; --faint: #908DA0;
+    --accent: #B45309; --go: #1F7A46; --warn: #A05A00; --bad: #B3372E;
+    --chip: #EFEDF5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17161D; --surface: #201F28; --line: #33313E;
+      --ink: #ECEAF2; --muted: #A5A2B3; --faint: #7C7990;
+      --accent: #F0A144; --go: #5DC389; --warn: #E5A94E; --bad: #E07A72;
+      --chip: #2A2833;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17161D; --surface: #201F28; --line: #33313E;
+    --ink: #ECEAF2; --muted: #A5A2B3; --faint: #7C7990;
+    --accent: #F0A144; --go: #5DC389; --warn: #E5A94E; --bad: #E07A72;
+    --chip: #2A2833;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); margin: 0; padding: 2rem 1rem 4rem;
+    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  .wrap { max-width: 62rem; margin: 0 auto; }
+  h1 { font-size: 1.35rem; margin: 0 0 .25rem; }
+  .sub { color: var(--muted); margin: 0 0 1.25rem; }
+  .tablebox { overflow-x: auto; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; }
+  table { border-collapse: collapse; width: 100%; min-width: 46rem; }
+  th, td { padding: .55rem .6rem; text-align: left; border-top: 1px solid var(--line);
+    white-space: nowrap; }
+  thead th { border-top: 0; font-size: .78rem; text-transform: uppercase;
+    letter-spacing: .04em; color: var(--faint); background: var(--chip); }
+  .rk { color: var(--faint); }
+  .coords { color: var(--faint); font-size: .78rem; }
+  .who { color: var(--muted); font-size: .85rem; }
+  .sem.go b { color: var(--go); }
+  .sem.warn b { color: var(--warn); }
+  .sem.bad b { color: var(--bad); }
+  a { color: var(--accent); }
+  footer { color: var(--faint); font-size: .8rem; margin-top: 1rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Puntos de Galicia en análisis — comparativa rápida</h1>
+  <p class="sub">Favoritos de la hoja del grupo · totalidad exacta por coordenada
+    (elementos Besselianos propios) · meteo del consenso de hoy para mañana 12-ago a la
+    hora del eclipse. <b>Cons</b> = probabilidad de cielo despejado del consenso
+    (verde ≥ 80 %); <b>OM</b> = Open-Meteo, <b>MG</b> = MeteoGalicia 1 km,
+    <b>Hist</b> = histórico 2000–2025; <b>Spread</b> = desacuerdo entre modelos
+    (más alto = menos fiable).</p>
+  <div class="tablebox">
+  <table>
+    <thead><tr>
+      <th></th><th>Punto</th><th>Quién</th><th>Totalidad · C2–C3</th>
+      <th>Cons</th><th>OM</th><th>MG</th><th>Hist</th><th>Spread</th><th>Enlaces</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td class="rk">1</td>
+        <td class="pt"><b>Guitiriz</b><br><span class="coords">43.21094, -7.78472 · 626 m</span></td>
+        <td class="who">BreoganN</td>
+        <td class="dur"><b>1m28.0s</b><br><span class="coords">20:27:45–20:29:13</span></td>
+        <td class="sem go"><b>100%</b></td>
+        <td>100%</td>
+        <td>100%</td>
+        <td>81%</td>
+        <td>0.01</td>
+        <td class="lnk"><a href="https://maps.google.com/?q=43.21094,-7.78472" target="_blank">Maps</a> · <a href="galicia.html">mapa</a></td>
+      </tr>
+      <tr>
+        <td class="rk">2</td>
+        <td class="pt"><b>Friol</b><br><span class="coords">43.10045, -7.89858 · 0 m</span></td>
+        <td class="who">BreoganN</td>
+        <td class="dur"><b>1m16.8s</b><br><span class="coords">20:28:03–20:29:20</span></td>
+        <td class="sem go"><b>100%</b></td>
+        <td>100%</td>
+        <td>100%</td>
+        <td>85%</td>
+        <td>0.01</td>
+        <td class="lnk"><a href="https://maps.google.com/?q=43.10045,-7.89858" target="_blank">Maps</a> · <a href="galicia.html">mapa</a></td>
+      </tr>
+      <tr>
+        <td class="rk">3</td>
+        <td class="pt"><b>Toques</b><br><span class="coords">42.93202, -7.91878 · 757 m</span></td>
+        <td class="who">BreoganN</td>
+        <td class="dur"><b>1m04.3s</b><br><span class="coords">20:28:27–20:29:31</span></td>
+        <td class="sem go"><b>100%</b></td>
+        <td>100%</td>
+        <td>100%</td>
+        <td>85%</td>
+        <td>0.01</td>
+        <td class="lnk"><a href="https://maps.google.com/?q=42.93202,-7.91878" target="_blank">Maps</a> · <a href="galicia.html">mapa</a></td>
+      </tr>
+      <tr>
+        <td class="rk">4</td>
+        <td class="pt"><b>Melide</b><br><span class="coords">42.97379, -8.01795 · 776 m</span></td>
+        <td class="who">BreoganN</td>
+        <td class="dur"><b>1m03.0s</b><br><span class="coords">20:28:24–20:29:27</span></td>
+        <td class="sem go"><b>100%</b></td>
+        <td>100%</td>
+        <td>100%</td>
+        <td>85%</td>
+        <td>0.01</td>
+        <td class="lnk"><a href="https://maps.google.com/?q=42.97379,-8.01795" target="_blank">Maps</a> · <a href="galicia.html">mapa</a></td>
+      </tr>
+      <tr>
+        <td class="rk">5</td>
+        <td class="pt"><b>Palas de Rei</b><br><span class="coords">42.91989, -7.93898 · 712 m</span></td>
+        <td class="who">BreoganN</td>
+        <td class="dur"><b>1m01.9s</b><br><span class="coords">20:28:29–20:29:31</span></td>
+        <td class="sem go"><b>100%</b></td>
+        <td>100%</td>
+        <td>100%</td>
+        <td>85%</td>
+        <td>0.01</td>
+        <td class="lnk"><a href="https://maps.google.com/?q=42.91989,-7.93898" target="_blank">Maps</a> · <a href="galicia.html">mapa</a></td>
+      </tr>
+      <tr>
+        <td class="rk">6</td>
+        <td class="pt"><b>Baleira</b><br><span class="coords">43.07350, -7.29255 · 1017 m</span></td>
+        <td class="who">BreoganN</td>
+        <td class="dur"><b>1m34.4s</b><br><span class="coords">20:27:52–20:29:27</span></td>
+        <td class="sem go"><b>99%</b></td>
+        <td>97%</td>
+        <td>100%</td>
+        <td>84%</td>
+        <td>0.17</td>
+        <td class="lnk"><a href="https://maps.google.com/?q=43.07350,-7.29255" target="_blank">Maps</a> · <a href="galicia.html">mapa</a></td>
+      </tr>
+      <tr>
+        <td class="rk">7</td>
+        <td class="pt"><b>Xermade</b><br><span class="coords">43.38611, -7.77003 · 598 m</span></td>
+        <td class="who">anónimo</td>
+        <td class="dur"><b>1m36.0s</b><br><span class="coords">20:27:24–20:29:00</span></td>
+        <td class="sem go"><b>98%</b></td>
+        <td>96%</td>
+        <td>100%</td>
+        <td>77%</td>
+        <td>0.34</td>
+        <td class="lnk"><a href="https://maps.google.com/?q=43.38611,-7.77003" target="_blank">Maps</a> · <a href="galicia.html">mapa</a></td>
+      </tr>
+      <tr>
+        <td class="rk">8</td>
+        <td class="pt"><b>Monfero</b><br><span class="coords">43.29044, -7.99040 · 669 m</span></td>
+        <td class="who">BreoganN</td>
+        <td class="dur"><b>1m26.2s</b><br><span class="coords">20:27:40–20:29:06</span></td>
+        <td class="sem go"><b>97%</b></td>
+        <td>95%</td>
+        <td>100%</td>
+        <td>82%</td>
+        <td>0.34</td>
+        <td class="lnk"><a href="https://maps.google.com/?q=43.29044,-7.99040" target="_blank">Maps</a> · <a href="galicia.html">mapa</a></td>
+      </tr>
+      <tr>
+        <td class="rk">9</td>
+        <td class="pt"><b>Meira</b><br><span class="coords">43.24193, -7.25398 · 818 m</span></td>
+        <td class="who">BreoganN</td>
+        <td class="dur"><b>1m40.7s</b><br><span class="coords">20:27:32–20:29:13</span></td>
+        <td class="sem go"><b>96%</b></td>
+        <td>92%</td>
+        <td>100%</td>
+        <td>80%</td>
+        <td>0.20</td>
+        <td class="lnk"><a href="https://maps.google.com/?q=43.24193,-7.25398" target="_blank">Maps</a> · <a href="galicia.html">mapa</a></td>
+      </tr>
+      <tr>
+        <td class="rk">10</td>
+        <td class="pt"><b>Muras</b><br><span class="coords">43.50738, -7.54965 · 957 m</span></td>
+        <td class="who">BreoganN</td>
+        <td class="dur"><b>1m43.7s</b><br><span class="coords">20:27:06–20:28:50</span></td>
+        <td class="sem go"><b>90%</b></td>
+        <td>80%</td>
+        <td>100%</td>
+        <td>70%</td>
+        <td>0.50</td>
+        <td class="lnk"><a href="https://maps.google.com/?q=43.50738,-7.54965" target="_blank">Maps</a> · <a href="galicia.html">mapa</a></td>
+      </tr>
+      <tr>
+        <td class="rk">11</td>
+        <td class="pt"><b>O Valadouro</b><br><span class="coords">43.58823, -7.45415 · 624 m</span></td>
+        <td class="who">anónimo</td>
+        <td class="dur"><b>1m46.4s</b><br><span class="coords">20:26:56–20:28:42</span></td>
+        <td class="sem warn"><b>77%</b></td>
+        <td>74%</td>
+        <td>80%</td>
+        <td>70%</td>
+        <td>0.50</td>
+        <td class="lnk"><a href="https://maps.google.com/?q=43.58823,-7.45415" target="_blank">Maps</a> · <a href="galicia.html">mapa</a></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <footer>Generado el 2026-08-11 14:33 · <a href="index.html">← portada</a> ·
+    <a href="galicia.html">mapa completo de Galicia</a> ·
+    <a href="miradoiros.html">comparativa de miradoiros desde Portosín</a></footer>
+</div>
+</body>
+</html>
