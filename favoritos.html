@@ -88,6 +88,14 @@
   }
   .precisos .grid b { color: var(--ink); font-weight: 600; margin-right: .3rem; }
   .precisos .src { color: var(--faint); font-size: .78rem; }
+  .cluster {
+    border: 1.5px solid var(--accent); border-radius: 12px;
+    padding: .8rem .8rem .1rem; margin-bottom: .9rem; background: transparent;
+  }
+  .cluster .card { border-style: dashed; }
+  .ctitle { display: flex; flex-direction: column; gap: .1rem; margin: 0 .3rem .7rem; }
+  .ctitle > span:first-child { font-weight: 650; }
+  .ctitle .csub { color: var(--muted); font-size: .82rem; }
   footer { margin-top: 2.6rem; color: var(--faint); font-size: .78rem; border-top: 1px solid var(--line); padding-top: .9rem; }
   @media (max-width: 540px) {
     .card { grid-template-columns: 1fr auto; }
@@ -106,7 +114,10 @@
   eclipse y, a igualdad, por segundos de totalidad. Cada tarjeta despliega sus
   <b>datos precisos</b>: totalidad exacta por coordenada (elementos Besselianos propios),
   modelos uno a uno, ensembles e histórico. El sol estará bajísimo (6–12° según zona):
-  horizonte limpio hacia poniente, obligatorio.</p>
+  horizonte limpio hacia poniente, obligatorio. Los puntos a menos de 12 km van
+  <b>agrupados en cajas</b>: plan A y plan B bajo el mismo cielo.
+  Los tiempos de coche son OSRM <b>sin tráfico</b> — hoy habrá mucho más:
+  el enlace 🚗 abre Google Maps con el <b>tráfico en vivo</b> de ese momento.</p>
   <p style="margin:.9rem 0 0;padding:.6rem .8rem;border:1.5px solid var(--accent);border-radius:8px;font-size:.95rem">
   🗺 <b>Mapa interactivo del grupo</b> (fichas completas, triaje y meteo al día):
   <a href="index.html" style="color:inherit;font-weight:600">elegir zona</a> ·
@@ -214,6 +225,10 @@
       </div>
     </details>
   </article>
+  <section class="cluster">
+    <div class="ctitle"><span>Melide + Toques + Palas de Rei</span><span class="csub">3 puntos ·
+      a 9 km entre sí · plan A y plan B sin cambiar de cielo</span></div>
+    
   <article class="card">
     <div class="drive num"><div class="t">1h32</div>
       <div class="sub">104 km desde Portosín<br>1h56 · 146 km desde Moaña</div></div>
@@ -241,39 +256,6 @@
           histórico 26 años 85 % ·
           spread 0.26</div>
         <div><b>Modelos</b> AROME-HD 100 % · ECMWF 100 % · GEM 100 % · GFS 100 % · ICON-EU 100 % · KNMI 100 % · ARPEGE 100 % · UKMO 100 % · JMA 74 %</div>
-        <div><b>Ensembles</b> ECMWF 100 % (51 miembros) · ICON 100 % (40 miembros) · GEFS 100 % (31 miembros)</div>
-        <div class="src"><b>Fuente meteo</b> pasada 2026-08-12 · celda exacta
-          · zona Galicia</div>
-      </div>
-    </details>
-  </article>
-  <article class="card">
-    <div class="drive num"><div class="t">2h03</div>
-      <div class="sub">120 km desde Portosín<br>2h27 · 162 km desde Moaña</div></div>
-    <div class="who"><span class="name">Friol</span>
-      <span class="muni">— m · Galicia</span></div>
-    <div class="tot num"><div class="d">1m17s</div>
-      <div class="bar"><i style="width:72%"></i></div></div>
-    <div class="meta">C2 20:28:03 · consenso hoy
-      <span class="ok"><b>98 %</b></span> despejado ·
-      marcado por BreoganN</div>
-    <div class="links num">
-      <a href="https://www.google.com/maps/search/?api=1&query=43.10045,-7.89858">📍 Pin</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.28,-8.74&destination=43.10045,-7.89858">🚗 Moaña</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.763,-8.919&destination=43.10045,-7.89858">🚗 Portosín</a> <a href="galicia.html">🗺 mapa Galicia</a>
-    </div>
-    <details class="precisos">
-      <summary>Datos precisos</summary>
-      <div class="grid num">
-        <div><b>Coordenadas</b> 43.10045, -7.89858 · — m
-          · Friol</div>
-        <div><b>Totalidad</b> C2 20:28:03 · máximo 20:28:41 · C3 20:29:20 ·
-          76.8 s · magnitud 1.0047</div>
-        <div><b>Sol en el máximo</b> 11.5° de altura · azimut 280°
-          (horizonte ONO limpio, obligatorio)</div>
-        <div><b>Consenso</b> 98 % despejado ·
-          Open-Meteo 97 % · MeteoGalicia 100 % ·
-          histórico 26 años 85 % ·
-          spread 0.26</div>
-        <div><b>Modelos</b> AROME-HD 100 % · ECMWF 100 % · GEM 100 % · GFS 100 % · KNMI 100 % · ARPEGE 100 % · UKMO 100 % · ICON-EU 99 % · JMA 74 %</div>
         <div><b>Ensembles</b> ECMWF 100 % (51 miembros) · ICON 100 % (40 miembros) · GEFS 100 % (31 miembros)</div>
         <div class="src"><b>Fuente meteo</b> pasada 2026-08-12 · celda exacta
           · zona Galicia</div>
@@ -346,6 +328,44 @@
       </div>
     </details>
   </article>
+  </section>
+  <article class="card">
+    <div class="drive num"><div class="t">2h03</div>
+      <div class="sub">120 km desde Portosín<br>2h27 · 162 km desde Moaña</div></div>
+    <div class="who"><span class="name">Friol</span>
+      <span class="muni">— m · Galicia</span></div>
+    <div class="tot num"><div class="d">1m17s</div>
+      <div class="bar"><i style="width:72%"></i></div></div>
+    <div class="meta">C2 20:28:03 · consenso hoy
+      <span class="ok"><b>98 %</b></span> despejado ·
+      marcado por BreoganN</div>
+    <div class="links num">
+      <a href="https://www.google.com/maps/search/?api=1&query=43.10045,-7.89858">📍 Pin</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.28,-8.74&destination=43.10045,-7.89858">🚗 Moaña</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.763,-8.919&destination=43.10045,-7.89858">🚗 Portosín</a> <a href="galicia.html">🗺 mapa Galicia</a>
+    </div>
+    <details class="precisos">
+      <summary>Datos precisos</summary>
+      <div class="grid num">
+        <div><b>Coordenadas</b> 43.10045, -7.89858 · — m
+          · Friol</div>
+        <div><b>Totalidad</b> C2 20:28:03 · máximo 20:28:41 · C3 20:29:20 ·
+          76.8 s · magnitud 1.0047</div>
+        <div><b>Sol en el máximo</b> 11.5° de altura · azimut 280°
+          (horizonte ONO limpio, obligatorio)</div>
+        <div><b>Consenso</b> 98 % despejado ·
+          Open-Meteo 97 % · MeteoGalicia 100 % ·
+          histórico 26 años 85 % ·
+          spread 0.26</div>
+        <div><b>Modelos</b> AROME-HD 100 % · ECMWF 100 % · GEM 100 % · GFS 100 % · KNMI 100 % · ARPEGE 100 % · UKMO 100 % · ICON-EU 99 % · JMA 74 %</div>
+        <div><b>Ensembles</b> ECMWF 100 % (51 miembros) · ICON 100 % (40 miembros) · GEFS 100 % (31 miembros)</div>
+        <div class="src"><b>Fuente meteo</b> pasada 2026-08-12 · celda exacta
+          · zona Galicia</div>
+      </div>
+    </details>
+  </article>
+  <section class="cluster">
+    <div class="ctitle"><span>Pena do Miradoiro + Guitiriz</span><span class="csub">2 puntos ·
+      misma celda meteo — mismo cielo garantizado · plan A y plan B sin cambiar de cielo</span></div>
+    
   <article class="card">
     <div class="drive num"><div class="t">1h59</div>
       <div class="sub">149 km desde Portosín<br>2h22 · 191 km desde Moaña</div></div>
@@ -412,6 +432,7 @@
       </div>
     </details>
   </article>
+  </section>
   <article class="card">
     <div class="drive num"><div class="t">2h10</div>
       <div class="sub">162 km desde Portosín<br>2h33 · 204 km desde Moaña</div></div>
@@ -511,6 +532,10 @@
       </div>
     </details>
   </article>
+  <section class="cluster">
+    <div class="ctitle"><span>Muras + O Valadouro</span><span class="csub">2 puntos ·
+      a 12 km entre sí · plan A y plan B sin cambiar de cielo</span></div>
+    
   <article class="card">
     <div class="drive num"><div class="t">2h50</div>
       <div class="sub">209 km desde Portosín<br>3h14 · 251 km desde Moaña</div></div>
@@ -577,9 +602,10 @@
       </div>
     </details>
   </article>
+  </section>
 </section>
 <footer class="num">
-  Generado el 2026-08-12 13:06 · datos: pasadas por zona indicadas en cada ficha ·
+  Generado el 2026-08-12 13:12 · datos: pasadas por zona indicadas en cada ficha ·
   Open-Meteo (9 modelos + ensembles) · MeteoSIX/MeteoGalicia (WRF 1 km) ·
   histórico ERA5 2000–2025 · rutas OSRM desde Portosín y Moaña ·
   <a href="comparativa.html">tabla comparativa</a> · <a href="index.html">portada</a>
