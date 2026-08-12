@@ -53,11 +53,19 @@
   h1 { margin: .5rem 0 .4rem; font-size: 1.9rem; line-height: 1.15; text-wrap: balance; font-weight: 600; }
   .stand { color: var(--muted); max-width: 40rem; margin: 0; }
   .stand b { color: var(--ink); font-weight: 600; }
+  .xnav {
+    position: sticky; top: 0; z-index: 10; background: var(--bg);
+    padding: .55rem 0; margin-bottom: .8rem; font-size: .92rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .xnav a { color: var(--accent-ink); text-decoration: none; font-weight: 600; }
   .card {
     background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
     padding: 1rem 1.1rem; margin-bottom: .8rem;
     display: grid; grid-template-columns: 6.4rem 1fr auto; gap: .35rem 1rem; align-items: start;
+    scroll-margin-top: 3.2rem;
   }
+  .card:target { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
   .drive { grid-row: span 2; }
   .drive .t { font-size: 1.45rem; font-weight: 650; letter-spacing: -.01em; }
   .drive .sub { font-size: .74rem; color: var(--muted); line-height: 1.35; margin-top: .15rem; }
@@ -107,6 +115,10 @@
   }
 </style>
 <main>
+<nav class="xnav">📋 <b>Fichas</b> ·
+  <a href="comparativa.html">📊 Comparativa</a> ·
+  <a href="favoritos_mapa.html">🗺 Mapa favoritos</a> ·
+  <a href="galicia.html">🌍 Mapa completo</a></nav>
 <header>
   <div class="eyebrow"><span class="glyph" aria-hidden="true"></span>Eclipse total · miércoles 12-ago-2026 · totalidad ~20:28</div>
   <h1 class="serif">Los 9 favoritos del grupo, con la meteo de hoy</h1>
@@ -141,7 +153,7 @@
 </header>
 <section aria-label="Favoritos ordenados por consenso de despejado">
 
-  <article class="card">
+  <article class="card" id="KU4NV">
     <div class="drive num"><div class="t">1h59</div>
       <div class="sub">129 km desde el Supercharger<br>2h38 · 177 km desde Portosín<br>3h02 · 219 km desde Moaña</div></div>
     <div class="who"><span class="id mono">KU4NV</span>
@@ -157,6 +169,8 @@
       marcado por BreoganN</div>
     <div class="links num">
       <a href="https://www.google.com/maps/search/?api=1&query=43.07350,-7.29255">📍 Pin</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.28,-8.74&destination=43.07350,-7.29255">🚗 Moaña</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.763,-8.919&destination=43.07350,-7.29255">🚗 Portosín</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.91004,-8.4934&destination=43.07350,-7.29255">🚗 Supercharger</a> <a href="galicia.html">🗺 mapa Galicia</a>
+      <a href="favoritos_mapa.html?p=KU4NV">🗺 en el mapa de favoritos</a>
+      <a href="comparativa.html#KU4NV">📊 en la comparativa</a>
     </div>
     <details class="precisos">
       <summary>Datos precisos</summary>
@@ -184,7 +198,7 @@
     <div class="ctitle"><span>Melide oeste (coche a 8 m) + Melide + Toques + Palas de Rei</span><span class="csub">4 puntos ·
       a 10 km entre sí · plan A y plan B sin cambiar de cielo</span></div>
     
-  <article class="card">
+  <article class="card" id="FM72M">
     <div class="drive num"><div class="t">0h53</div>
       <div class="sub">57 km desde el Supercharger<br>1h32 · 105 km desde Portosín<br>1h56 · 147 km desde Moaña</div></div>
     <div class="who"><span class="id mono">FM72M</span>
@@ -200,6 +214,8 @@
       marcado por BreoganN</div>
     <div class="links num">
       <a href="https://www.google.com/maps/search/?api=1&query=42.98052,-8.02713">📍 Pin</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.28,-8.74&destination=42.98052,-8.02713">🚗 Moaña</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.763,-8.919&destination=42.98052,-8.02713">🚗 Portosín</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.91004,-8.4934&destination=42.98052,-8.02713">🚗 Supercharger</a> <a href="galicia.html">🗺 mapa Galicia</a>
+      <a href="favoritos_mapa.html?p=FM72M">🗺 en el mapa de favoritos</a>
+      <a href="comparativa.html#FM72M">📊 en la comparativa</a>
     </div>
     <details class="precisos">
       <summary>Datos precisos</summary>
@@ -223,7 +239,7 @@
       </div>
     </details>
   </article>
-  <article class="card">
+  <article class="card" id="7Z8TE">
     <div class="drive num"><div class="t">0h53</div>
       <div class="sub">56 km desde el Supercharger<br>1h32 · 104 km desde Portosín<br>1h56 · 146 km desde Moaña</div></div>
     <div class="who"><span class="id mono">7Z8TE</span>
@@ -239,6 +255,8 @@
       marcado por BreoganN</div>
     <div class="links num">
       <a href="https://www.google.com/maps/search/?api=1&query=42.97379,-8.01795">📍 Pin</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.28,-8.74&destination=42.97379,-8.01795">🚗 Moaña</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.763,-8.919&destination=42.97379,-8.01795">🚗 Portosín</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.91004,-8.4934&destination=42.97379,-8.01795">🚗 Supercharger</a> <a href="galicia.html">🗺 mapa Galicia</a>
+      <a href="favoritos_mapa.html?p=7Z8TE">🗺 en el mapa de favoritos</a>
+      <a href="comparativa.html#7Z8TE">📊 en la comparativa</a>
     </div>
     <details class="precisos">
       <summary>Datos precisos</summary>
@@ -262,7 +280,7 @@
       </div>
     </details>
   </article>
-  <article class="card">
+  <article class="card" id="2MH75">
     <div class="drive num"><div class="t">1h01</div>
       <div class="sub">57 km desde el Supercharger<br>1h40 · 105 km desde Portosín<br>2h04 · 147 km desde Moaña</div></div>
     <div class="who"><span class="id mono">2MH75</span>
@@ -278,6 +296,8 @@
       marcado por BreoganN</div>
     <div class="links num">
       <a href="https://www.google.com/maps/search/?api=1&query=42.93202,-7.91878">📍 Pin</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.28,-8.74&destination=42.93202,-7.91878">🚗 Moaña</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.763,-8.919&destination=42.93202,-7.91878">🚗 Portosín</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.91004,-8.4934&destination=42.93202,-7.91878">🚗 Supercharger</a> <a href="galicia.html">🗺 mapa Galicia</a>
+      <a href="favoritos_mapa.html?p=2MH75">🗺 en el mapa de favoritos</a>
+      <a href="comparativa.html#2MH75">📊 en la comparativa</a>
     </div>
     <details class="precisos">
       <summary>Datos precisos</summary>
@@ -301,7 +321,7 @@
       </div>
     </details>
   </article>
-  <article class="card">
+  <article class="card" id="TCURD">
     <div class="drive num"><div class="t">0h52</div>
       <div class="sub">55 km desde el Supercharger<br>1h31 · 103 km desde Portosín<br>1h55 · 145 km desde Moaña</div></div>
     <div class="who"><span class="id mono">TCURD</span>
@@ -317,6 +337,8 @@
       marcado por BreoganN</div>
     <div class="links num">
       <a href="https://www.google.com/maps/search/?api=1&query=42.91989,-7.93898">📍 Pin</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.28,-8.74&destination=42.91989,-7.93898">🚗 Moaña</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.763,-8.919&destination=42.91989,-7.93898">🚗 Portosín</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.91004,-8.4934&destination=42.91989,-7.93898">🚗 Supercharger</a> <a href="galicia.html">🗺 mapa Galicia</a>
+      <a href="favoritos_mapa.html?p=TCURD">🗺 en el mapa de favoritos</a>
+      <a href="comparativa.html#TCURD">📊 en la comparativa</a>
     </div>
     <details class="precisos">
       <summary>Datos precisos</summary>
@@ -345,7 +367,7 @@
     <div class="ctitle"><span>Pena do Miradoiro + Guitiriz</span><span class="csub">2 puntos ·
       misma celda meteo — mismo cielo garantizado · plan A y plan B sin cambiar de cielo</span></div>
     
-  <article class="card">
+  <article class="card" id="VM8EG">
     <div class="drive num"><div class="t">1h20</div>
       <div class="sub">100 km desde el Supercharger<br>1h59 · 149 km desde Portosín<br>2h22 · 191 km desde Moaña</div></div>
     <div class="who"><span class="id mono">VM8EG</span>
@@ -361,6 +383,8 @@
       marcado por Adrián (chat)</div>
     <div class="links num">
       <a href="https://www.google.com/maps/search/?api=1&query=43.22442,-7.77921">📍 Pin</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.28,-8.74&destination=43.22442,-7.77921">🚗 Moaña</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.763,-8.919&destination=43.22442,-7.77921">🚗 Portosín</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.91004,-8.4934&destination=43.22442,-7.77921">🚗 Supercharger</a> <a href="galicia.html">🗺 mapa Galicia</a>
+      <a href="favoritos_mapa.html?p=VM8EG">🗺 en el mapa de favoritos</a>
+      <a href="comparativa.html#VM8EG">📊 en la comparativa</a>
     </div>
     <details class="precisos">
       <summary>Datos precisos</summary>
@@ -384,7 +408,7 @@
       </div>
     </details>
   </article>
-  <article class="card">
+  <article class="card" id="U8489">
     <div class="drive num"><div class="t">1h19</div>
       <div class="sub">96 km desde el Supercharger<br>1h57 · 145 km desde Portosín<br>2h21 · 187 km desde Moaña</div></div>
     <div class="who"><span class="id mono">U8489</span>
@@ -400,6 +424,8 @@
       marcado por BreoganN, Adrián (chat)</div>
     <div class="links num">
       <a href="https://www.google.com/maps/search/?api=1&query=43.21094,-7.78472">📍 Pin</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.28,-8.74&destination=43.21094,-7.78472">🚗 Moaña</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.763,-8.919&destination=43.21094,-7.78472">🚗 Portosín</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.91004,-8.4934&destination=43.21094,-7.78472">🚗 Supercharger</a> <a href="galicia.html">🗺 mapa Galicia</a>
+      <a href="favoritos_mapa.html?p=U8489">🗺 en el mapa de favoritos</a>
+      <a href="comparativa.html#U8489">📊 en la comparativa</a>
     </div>
     <details class="precisos">
       <summary>Datos precisos</summary>
@@ -424,7 +450,7 @@
     </details>
   </article>
   </section>
-  <article class="card">
+  <article class="card" id="HN67G">
     <div class="drive num"><div class="t">1h31</div>
       <div class="sub">89 km desde el Supercharger<br>2h09 · 138 km desde Portosín<br>2h33 · 180 km desde Moaña</div></div>
     <div class="who"><span class="id mono">HN67G</span>
@@ -440,6 +466,8 @@
       marcado por BreoganN</div>
     <div class="links num">
       <a href="https://www.google.com/maps/search/?api=1&query=43.29044,-7.99040">📍 Pin</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.28,-8.74&destination=43.29044,-7.99040">🚗 Moaña</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.763,-8.919&destination=43.29044,-7.99040">🚗 Portosín</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.91004,-8.4934&destination=43.29044,-7.99040">🚗 Supercharger</a> <a href="galicia.html">🗺 mapa Galicia</a>
+      <a href="favoritos_mapa.html?p=HN67G">🗺 en el mapa de favoritos</a>
+      <a href="comparativa.html#HN67G">📊 en la comparativa</a>
     </div>
     <details class="precisos">
       <summary>Datos precisos</summary>
@@ -463,7 +491,7 @@
       </div>
     </details>
   </article>
-  <article class="card">
+  <article class="card" id="37ATB">
     <div class="drive num"><div class="t">1h53</div>
       <div class="sub">145 km desde el Supercharger<br>2h32 · 193 km desde Portosín<br>2h55 · 235 km desde Moaña</div></div>
     <div class="who"><span class="id mono">37ATB</span>
@@ -479,6 +507,8 @@
       marcado por BreoganN</div>
     <div class="links num">
       <a href="https://www.google.com/maps/search/?api=1&query=43.24193,-7.25398">📍 Pin</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.28,-8.74&destination=43.24193,-7.25398">🚗 Moaña</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.763,-8.919&destination=43.24193,-7.25398">🚗 Portosín</a> <a href="https://www.google.com/maps/dir/?api=1&origin=42.91004,-8.4934&destination=43.24193,-7.25398">🚗 Supercharger</a> <a href="galicia.html">🗺 mapa Galicia</a>
+      <a href="favoritos_mapa.html?p=37ATB">🗺 en el mapa de favoritos</a>
+      <a href="comparativa.html#37ATB">📊 en la comparativa</a>
     </div>
     <details class="precisos">
       <summary>Datos precisos</summary>
@@ -505,7 +535,7 @@
 </section>
 <footer class="num">
   La hoja guarda además 2 favoritos fuera de Galicia (Somolinos (Guadalajara), Arcones (Segovia)) que esta vista no muestra.<br>
-  Generado el 2026-08-12 15:38 · datos: pasadas por zona indicadas en cada ficha ·
+  Generado el 2026-08-12 15:41 · datos: pasadas por zona indicadas en cada ficha ·
   Open-Meteo (9 modelos + ensembles) · MeteoSIX/MeteoGalicia (WRF 1 km) ·
   histórico ERA5 2000–2025 · rutas OSRM desde Portosín y Moaña ·
   <a href="comparativa.html">tabla comparativa</a> · <a href="index.html">portada</a>

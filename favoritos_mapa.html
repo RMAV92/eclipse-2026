@@ -29,9 +29,11 @@
 </head>
 <body>
 <div id="map"></div>
-<div class="bar">🌘 <b>Favoritos del grupo</b> · tiempo/km por carretera desde el
-  ⚡ Supercharger (punto de encuentro) · <a href="favoritos.html">fichas</a> ·
-  <a href="comparativa.html">comparativa</a> · <a href="galicia.html">mapa completo</a></div>
+<div class="bar">🌘 tiempo/km por carretera desde el ⚡ Supercharger ·
+  <a href="favoritos.html">📋 Fichas</a> ·
+  <a href="comparativa.html">📊 Comparativa</a> ·
+  🗺 <b>Mapa favoritos</b> ·
+  <a href="galicia.html">🌍 Mapa completo</a></div>
 <script>
 const SC = [42.91004, -8.4934];
 const PTS = [{"key": "43.0735,-7.29255", "lat": 43.0735, "lon": -7.29255, "id": "KU4NV", "name": "Castroverde", "dur": "1m34s", "c1": "19:31:39", "c2": "20:27:52", "max": "20:28:40", "c3": "20:29:27", "cons": 0.996, "drive": "1h59 · 129 km", "grp": 0}, {"key": "42.91989,-7.93898", "lat": 42.91989, "lon": -7.93898, "id": "TCURD", "name": "Palas de Rei", "dur": "1m02s", "c1": "19:31:49", "c2": "20:28:29", "max": "20:29:00", "c3": "20:29:31", "cons": 0.985, "drive": "0h52 · 55 km", "grp": 1}, {"key": "43.21094,-7.78472", "lat": 43.21094, "lon": -7.78472, "id": "U8489", "name": "Guitiriz", "dur": "1m28s", "c1": "19:31:19", "c2": "20:27:45", "max": "20:28:29", "c3": "20:29:13", "cons": 0.983, "drive": "1h19 · 96 km", "grp": 2}, {"key": "43.29044,-7.9904", "lat": 43.29044, "lon": -7.9904, "id": "HN67G", "name": "Monfero", "dur": "1m26s", "c1": "19:31:08", "c2": "20:27:40", "max": "20:28:23", "c3": "20:29:06", "cons": 0.977, "drive": "1h31 · 89 km", "grp": 3}, {"key": "43.24193,-7.25398", "lat": 43.24193, "lon": -7.25398, "id": "37ATB", "name": "Serra de Meira", "dur": "1m41s", "c1": "19:31:21", "c2": "20:27:32", "max": "20:28:22", "c3": "20:29:13", "cons": 0.975, "drive": "1h53 · 145 km", "grp": 4}, {"key": "42.97379,-8.01795", "lat": 42.97379, "lon": -8.01795, "id": "7Z8TE", "name": "Melide", "dur": "1m03s", "c1": "19:31:43", "c2": "20:28:24", "max": "20:28:55", "c3": "20:29:27", "cons": 0.986, "drive": "0h53 · 56 km", "grp": 1}, {"key": "42.93202,-7.91878", "lat": 42.93202, "lon": -7.91878, "id": "2MH75", "name": "Toques", "dur": "1m04s", "c1": "19:31:48", "c2": "20:28:27", "max": "20:28:59", "c3": "20:29:31", "cons": 0.985, "drive": "1h01 · 57 km", "grp": 1}, {"key": "42.98052,-8.02713", "lat": 42.98052, "lon": -8.02713, "id": "FM72M", "name": "Melide oeste (coche a 8 m)", "dur": "1m03s", "c1": "19:31:42", "c2": "20:28:23", "max": "20:28:55", "c3": "20:29:26", "cons": 0.986, "drive": "0h53 · 57 km", "grp": 1}, {"key": "43.22442,-7.77921", "lat": 43.22442, "lon": -7.77921, "id": "VM8EG", "name": "Pena do Miradoiro", "dur": "1m29s", "c1": "19:31:18", "c2": "20:27:44", "max": "20:28:28", "c3": "20:29:13", "cons": 0.983, "drive": "1h20 · 100 km", "grp": 2}];
@@ -57,11 +59,12 @@ GRUPOS.forEach(g => {
 });
 
 const bounds = [SC];
+const MARKERS = {};
 PTS.forEach(p => {
   const color = PAL[p.grp % PAL.length];
   bounds.push([p.lat, p.lon]);
   const consTxt = p.cons == null ? "—" : Math.round(p.cons * 100) + " %";
-  L.circleMarker([p.lat, p.lon], { radius: 7, color, weight: 2,
+  MARKERS[p.id] = L.circleMarker([p.lat, p.lon], { radius: 7, color, weight: 2,
     fillColor: color, fillOpacity: 0.75 }).addTo(map)
     .bindTooltip(`<b>${p.name}</b> · ${p.drive}`,
       { permanent: true, direction: "right", offset: [8, 0], className: "lbl" })
@@ -69,12 +72,20 @@ PTS.forEach(p => {
       `Totalidad <b>${p.dur}</b> · despejado hoy <b>${consTxt}</b><br>` +
       `🌘 empieza ${p.c1} · totalidad ${p.c2} · máx ${p.max} · se libra ${p.c3}<br>` +
       `⚡→ ${p.drive} por carretera<br>` +
+      `📋 <a href="favoritos.html#${p.id}">ficha</a> · ` +
+      `📊 <a href="comparativa.html#${p.id}">comparativa</a> · ` +
       `<a href="https://www.google.com/maps/dir/?api=1&origin=${SC[0]},${SC[1]}` +
       `&destination=${p.lat},${p.lon}" target="_blank">🚗 ruta desde el Supercharger</a> · ` +
       `<a href="https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lon}" target="_blank">📍 pin</a>`);
 });
 map.fitBounds(bounds, { padding: [40, 40] });
+// deep link: favoritos_mapa.html?p=CODE centers that point and opens its popup
+const want = new URLSearchParams(location.search).get("p");
+if (want && MARKERS[want]) {
+  map.setView(MARKERS[want].getLatLng(), 13);
+  MARKERS[want].openPopup();
+}
 </script>
-<!-- generado 2026-08-12 15:37 · gen_favmap.py -->
+<!-- generado 2026-08-12 15:41 · gen_favmap.py -->
 </body>
 </html>
