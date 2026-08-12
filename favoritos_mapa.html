@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Eclipse 12-ago · favoritos (mapa ligero)</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  html, body { margin: 0; height: 100%; }
+  #map { height: 100%; }
+  .bar {
+    position: absolute; z-index: 1000; top: 10px; left: 54px; right: 10px;
+    background: rgba(255,255,255,.94); border-radius: 8px; padding: .45rem .7rem;
+    font: 13px/1.4 -apple-system, "Segoe UI", Roboto, sans-serif; color: #24222E;
+    box-shadow: 0 1px 4px rgba(0,0,0,.25);
+  }
+  .bar a { color: #B45309; }
+  .lbl {
+    background: rgba(255,255,255,.92); border: 1px solid #ccc; border-radius: 4px;
+    padding: 1px 5px; font: 11px/1.3 -apple-system, "Segoe UI", Roboto, sans-serif;
+    box-shadow: none; white-space: nowrap;
+  }
+  .lbl b { color: #8A3E05; }
+  .sc-ico { font-size: 22px; text-shadow: 0 0 3px #fff, 0 0 6px #fff; }
+  .leaflet-popup-content { font: 13px/1.45 -apple-system, "Segoe UI", Roboto, sans-serif; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div class="bar">🌘 <b>Favoritos del grupo</b> · tiempo/km por carretera desde el
+  ⚡ Supercharger (punto de encuentro) · <a href="favoritos.html">fichas</a> ·
+  <a href="comparativa.html">comparativa</a> · <a href="galicia.html">mapa completo</a></div>
+<script>
+const SC = [42.91004, -8.4934];
+const PTS = [{"key": "43.0735,-7.29255", "lat": 43.0735, "lon": -7.29255, "id": "KU4NV", "name": "Castroverde", "dur": "1m34s", "c1": "19:31:39", "c2": "20:27:52", "max": "20:28:40", "c3": "20:29:27", "cons": 0.996, "drive": "1h59 · 129 km", "grp": 0}, {"key": "42.91989,-7.93898", "lat": 42.91989, "lon": -7.93898, "id": "TCURD", "name": "Palas de Rei", "dur": "1m02s", "c1": "19:31:49", "c2": "20:28:29", "max": "20:29:00", "c3": "20:29:31", "cons": 0.985, "drive": "0h52 · 55 km", "grp": 1}, {"key": "43.21094,-7.78472", "lat": 43.21094, "lon": -7.78472, "id": "U8489", "name": "Guitiriz", "dur": "1m28s", "c1": "19:31:19", "c2": "20:27:45", "max": "20:28:29", "c3": "20:29:13", "cons": 0.983, "drive": "1h19 · 96 km", "grp": 2}, {"key": "43.29044,-7.9904", "lat": 43.29044, "lon": -7.9904, "id": "HN67G", "name": "Monfero", "dur": "1m26s", "c1": "19:31:08", "c2": "20:27:40", "max": "20:28:23", "c3": "20:29:06", "cons": 0.977, "drive": "1h31 · 89 km", "grp": 3}, {"key": "43.24193,-7.25398", "lat": 43.24193, "lon": -7.25398, "id": "37ATB", "name": "Serra de Meira", "dur": "1m41s", "c1": "19:31:21", "c2": "20:27:32", "max": "20:28:22", "c3": "20:29:13", "cons": 0.975, "drive": "1h53 · 145 km", "grp": 4}, {"key": "42.97379,-8.01795", "lat": 42.97379, "lon": -8.01795, "id": "7Z8TE", "name": "Melide", "dur": "1m03s", "c1": "19:31:43", "c2": "20:28:24", "max": "20:28:55", "c3": "20:29:27", "cons": 0.986, "drive": "0h53 · 56 km", "grp": 1}, {"key": "42.93202,-7.91878", "lat": 42.93202, "lon": -7.91878, "id": "2MH75", "name": "Toques", "dur": "1m04s", "c1": "19:31:48", "c2": "20:28:27", "max": "20:28:59", "c3": "20:29:31", "cons": 0.985, "drive": "1h01 · 57 km", "grp": 1}, {"key": "42.98052,-8.02713", "lat": 42.98052, "lon": -8.02713, "id": "FM72M", "name": "Melide oeste (coche a 8 m)", "dur": "1m03s", "c1": "19:31:42", "c2": "20:28:23", "max": "20:28:55", "c3": "20:29:26", "cons": 0.986, "drive": "0h53 · 57 km", "grp": 1}, {"key": "43.22442,-7.77921", "lat": 43.22442, "lon": -7.77921, "id": "VM8EG", "name": "Pena do Miradoiro", "dur": "1m29s", "c1": "19:31:18", "c2": "20:27:44", "max": "20:28:28", "c3": "20:29:13", "cons": 0.983, "drive": "1h20 · 100 km", "grp": 2}];
+const GRUPOS = [{"grp": 1, "names": "Palas de Rei + Melide + Toques + Melide oeste (coche a 8 m)", "members": [[42.91989, -7.93898], [42.97379, -8.01795], [42.93202, -7.91878], [42.98052, -8.02713]]}, {"grp": 2, "names": "Guitiriz + Pena do Miradoiro", "members": [[43.21094, -7.78472], [43.22442, -7.77921]]}];
+const PAL = ["#B45309", "#1F7A46", "#7C3AED", "#B3372E", "#0E7490"];
+const map = L.map("map");
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+  { attribution: "© OpenStreetMap", maxZoom: 17 }).addTo(map);
+
+L.marker(SC, { icon: L.divIcon({ className: "sc-ico", html: "⚡", iconSize: [24, 24],
+  iconAnchor: [12, 12] }) }).addTo(map)
+  .bindTooltip("Supercharger Santiago — punto de encuentro", { direction: "top" })
+  .bindPopup("<b>⚡ Supercharger de Tesla</b><br>Parque Empresarial da Sionlla, " +
+    "Rúa de Castela e León 65, Santiago<br>Quedada para compartir coches." +
+    `<br><a href="https://www.google.com/maps/search/?api=1&query=${SC[0]},${SC[1]}" target="_blank">Google Maps</a>`);
+
+// dashed area per multi-point cluster: same sky, plan A + plan B
+GRUPOS.forEach(g => {
+  const color = PAL[g.grp % PAL.length];
+  const ring = g.members.length > 2 ? L.polygon(g.members) : L.polyline(g.members);
+  ring.setStyle({ color, weight: 2, dashArray: "6 5", fillOpacity: 0.06 });
+  ring.addTo(map).bindTooltip(g.names, { sticky: true });
+});
+
+const bounds = [SC];
+PTS.forEach(p => {
+  const color = PAL[p.grp % PAL.length];
+  bounds.push([p.lat, p.lon]);
+  const consTxt = p.cons == null ? "—" : Math.round(p.cons * 100) + " %";
+  L.circleMarker([p.lat, p.lon], { radius: 7, color, weight: 2,
+    fillColor: color, fillOpacity: 0.75 }).addTo(map)
+    .bindTooltip(`<b>${p.name}</b> · ${p.drive}`,
+      { permanent: true, direction: "right", offset: [8, 0], className: "lbl" })
+    .bindPopup(`<b><code>${p.id}</code> ${p.name}</b><br>` +
+      `Totalidad <b>${p.dur}</b> · despejado hoy <b>${consTxt}</b><br>` +
+      `🌘 empieza ${p.c1} · totalidad ${p.c2} · máx ${p.max} · se libra ${p.c3}<br>` +
+      `⚡→ ${p.drive} por carretera<br>` +
+      `<a href="https://www.google.com/maps/dir/?api=1&origin=${SC[0]},${SC[1]}` +
+      `&destination=${p.lat},${p.lon}" target="_blank">🚗 ruta desde el Supercharger</a> · ` +
+      `<a href="https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lon}" target="_blank">📍 pin</a>`);
+});
+map.fitBounds(bounds, { padding: [40, 40] });
+</script>
+<!-- generado 2026-08-12 15:37 · gen_favmap.py -->
+</body>
+</html>
